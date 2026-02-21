@@ -44,20 +44,16 @@
 
   <!-- Aerial Panel -->
   <div id="aerial-panel" class="panel hidden">
-    <div class="panel-hd"><span>航空写真</span><button class="panel-x">&times;</button></div>
+    <div class="panel-hd"><span>航空写真</span><button class="panel-x" onclick="hideAerial()">&times;</button></div>
     <div id="aerial-map" class="panel-body"></div>
   </div>
 
-  <!-- StreetView Substitute Panel -->
-  <div id="sv-panel" class="panel hidden">
-    <div class="panel-hd"><span>ストリートビュー (航空写真)</span><button class="panel-x">&times;</button></div>
-    <div id="sv-body" class="panel-body">
-      <div class="sv-placeholder">
-        <div class="sv-ph-icon">&#128065;</div>
-        <p>地点を選択してください</p>
-        <p class="muted">右クリック →「ストリートビュー表示」</p>
-      </div>
-    </div>
+  <!-- StreetView Indicator (popup controller) -->
+  <div id="sv-indicator" class="hidden">
+    <div class="svi-label">📷 Street View</div>
+    <div id="svi-addr" class="svi-addr"></div>
+    <button id="svi-open" class="svi-btn">再表示</button>
+    <button class="svi-close" onclick="closeSV()">&times;</button>
   </div>
 
   <!-- AI Dialog -->
@@ -72,36 +68,34 @@
 
   <!-- Context Menu -->
   <div id="ctx-menu" class="hidden">
-    <div class="ctx-item" data-action="sv">&#128065; この地点のストリートビューを表示</div>
-    <div class="ctx-item" data-action="nearby">&#128269; この地点を中心に周辺検索</div>
-    <div class="ctx-item" data-action="reverse">&#128205; この地点の住所を取得</div>
-    <div class="ctx-item" data-action="aerial">&#128752; 航空写真で確認</div>
+    <div class="ctx-item" data-action="sv">📷 この地点のストリートビューを表示</div>
+    <div class="ctx-item" data-action="nearby">🔍 この地点を中心に周辺検索</div>
+    <div class="ctx-item" data-action="reverse">📍 この地点の住所を取得</div>
+    <div class="ctx-item" data-action="aerial">🛰 航空写真で確認</div>
   </div>
 
-  <!-- Demo Simulator -->
-  <footer id="demo-bar">
-    <div class="demo-sec">
-      <label>シナリオ:</label>
+  <!-- Transcript / Demo Panel -->
+  <footer id="transcript-bar">
+    <div class="tb-controls">
+      <label>シナリオ</label>
       <select id="demo-scenario">
         <option value="area_a">A: 同一番地密集（松戸）</option>
         <option value="area_b">B: 路上通報（柏）</option>
         <option value="area_c">C: テナント変更（流山）</option>
         <option value="area_d">D: 類似マンション（鎌ケ谷）</option>
       </select>
+      <button id="btn-start" class="dbtn red">開始</button>
+      <button id="btn-reset" class="dbtn gray hidden">リセット</button>
     </div>
-    <div class="demo-sec">
-      <button id="btn-start" class="dbtn red">通報開始</button>
-      <button id="btn-end" class="dbtn gray" disabled>通報終了</button>
+    <div id="transcript-area">
+      <div id="transcript-lines">
+        <div class="tl-placeholder">← シナリオを選択して「開始」をクリック</div>
+      </div>
     </div>
-    <div class="demo-sec">
-      <button id="btn-gps" class="dbtn blue" disabled>GPS送信</button>
-      <button id="btn-search" class="dbtn purple" disabled>住所検索シミュレート</button>
+    <div class="tb-advance">
+      <button id="btn-next" class="dbtn-next" disabled>次へ →</button>
+      <div id="step-counter" class="step-counter"></div>
     </div>
-    <div class="demo-sec">
-      <button id="btn-skip15" class="dbtn dark" disabled>+15秒</button>
-      <button id="btn-skip20" class="dbtn dark" disabled>+20秒</button>
-    </div>
-    <div class="demo-sec demo-right"><span id="demo-status">デモモード: 待機中</span></div>
   </footer>
 
   <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
