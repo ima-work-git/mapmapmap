@@ -53,6 +53,20 @@ area_d:{id:"area_d",name:"類似マンション地区（鎌ケ谷）",center:[14
     {id:"D3",name:"ライオンズマンション鎌ケ谷第三",addr:"千葉県鎌ケ谷市新鎌ケ谷2-3-1",lat:35.7710,lng:140.0020,fl:10,units:80,feats:["線路沿い","10階建て","左にコンビニ"],dist:"線路沿い・10階建て・左にコンビニ"}
   ],
   dtree:{q:"何階建てのマンションですか？",options:{"14階":{result:"D1",label:"ライオンズマンション鎌ケ谷第一"},"8階":{result:"D2",label:"ライオンズマンション鎌ケ谷第二"},"10階":{result:"D3",label:"ライオンズマンション鎌ケ谷第三"},"不明":{q:"1階にコンビニは入っていますか？",options:{"はい":{q:"ローソンですか？",options:{"はい":{result:"D1",label:"第一（1階ローソン）"},"いいえ":{result:"D3",label:"第三（左にコンビニ）"}}},"いいえ":{result:"D2",label:"第二（向かいに公園）"}}}}}
+},
+area_e:{id:"area_e",name:"路上通報・複数コンビニ（松戸駅周辺）",center:[139.9008,35.7828],
+  gps:{lat:35.7825,lng:139.9005,acc:250},
+  landmarks:[
+    {name:"松戸駅前交差点",cat:"intersection",lat:35.7831,lng:139.9011,heading:0},
+    {name:"松戸中央通り交差点",cat:"intersection",lat:35.7818,lng:139.8998,heading:90},
+    {name:"セブン-イレブン松戸駅西口店",cat:"convenience_store",lat:35.7836,lng:139.8995,heading:90},
+    {name:"ファミリーマート松戸本町一丁目店",cat:"convenience_store",lat:35.7817,lng:139.9018,heading:315},
+    {name:"ローソン松戸駅東口店",cat:"convenience_store",lat:35.7838,lng:139.9022,heading:200},
+    {name:"ミニストップ松戸駅前店",cat:"convenience_store",lat:35.7822,lng:139.9002,heading:45},
+    {name:"松戸駅前郵便局",cat:"store",lat:35.7828,lng:139.9015,heading:270},
+    {name:"ENEOS松戸駅前SS",cat:"gas_station",lat:35.7813,lng:139.8995,heading:0},
+    {name:"松戸中央公園",cat:"park",lat:35.7845,lng:139.8988,heading:135}
+  ]
 }};
 
 /* ═══════════════════ 2. SCENARIO TRANSCRIPTS ═══════════════════ */
@@ -81,12 +95,12 @@ area_a:[
   {s:"S",t:"📍 住所確定: 千葉県松戸市松戸1234番地 山田宅",a:{type:"confirm",id:"A2"}},
 ],
 area_b:[
+  {s:"S",t:"📡 入電GPS: 35.8680, 139.9755（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.8680,lng:139.9755,acc:300}},
   {s:"C",t:"あの、事故です！車と自転車がぶつかって…！"},
   {s:"D",t:"119番消防です。おケガされた方はいますか？"},
   {s:"C",t:"はい、自転車の人が倒れてます！場所は柏駅の近くですが、住所がわかりません…"},
-  {s:"D",t:"大丈夫です。GPS情報を確認しますね。",a:{type:"fly",lat:35.8681,lng:139.9757,z:15}},
-  {s:"S",t:"📡 GPS受信: 35.8680, 139.9755（精度 ±150m）",a:{type:"gps"}},
-  {s:"S",t:"⚡ T3発火: 路上通報 — GPS誤差円+周辺ランドマーク表示",a:{type:"trigger_t3"}},
+  {s:"S",t:"📡 GPS更新: 精度向上 ±150m",a:{type:"gps_update",acc:150}},
+  {s:"S",t:"⚡ T3発火: 路上通報 — 周辺ランドマーク表示",a:{type:"trigger_t3"}},
   {s:"D",t:"GPS情報が入りました。大きい道路沿いですか？交差点の近くですか？"},
   {s:"C",t:"はい！大きい道路で、信号のある交差点のすぐそばです！",a:{type:"sv_gallery",cat:"intersection"}},
   {s:"S",t:"🚦 交差点候補: 2件 — 右パネルにストリートビュー表示"},
@@ -133,6 +147,25 @@ area_d:[
   {s:"D",t:"ライオンズマンション鎌ケ谷第一ですね。何階の廊下ですか？",a:{type:"sv",lat:35.7703,lng:140.0008,h:0}},
   {s:"C",t:"5階です。エレベーターの前です。"},
   {s:"S",t:"📍 住所確定: 千葉県鎌ケ谷市新鎌ケ谷1-10-1 ライオンズマンション鎌ケ谷第一 5階廊下",a:{type:"confirm_d",id:"D1"}},
+],
+area_e:[
+  {s:"S",t:"📡 入電GPS: 35.7825, 139.9005（精度 ±250m — 測位中…）",a:{type:"gps",lat:35.7825,lng:139.9005,acc:250}},
+  {s:"C",t:"すみません、人が道で倒れてます！意識がないみたいです！"},
+  {s:"D",t:"119番消防です。救急ですね。今どちらにいらっしゃいますか？"},
+  {s:"C",t:"松戸駅の近くの道路なんですけど…住所がわからなくて…"},
+  {s:"S",t:"📡 GPS更新: 精度向上 ±100m",a:{type:"gps_update",acc:100}},
+  {s:"S",t:"⚡ T3発火: 路上通報 — 周辺ランドマーク表示",a:{type:"trigger_t3"}},
+  {s:"D",t:"GPSで松戸駅付近と出ています。周りにコンビニは見えますか？"},
+  {s:"C",t:"はい！すぐ近くにコンビニがあります！",a:{type:"sv_gallery",cat:"convenience_store"}},
+  {s:"S",t:"🏪 コンビニ候補: 4件 — 距離順にストリートビュー表示中"},
+  {s:"D",t:"何のコンビニですか？看板の色は何色ですか？"},
+  {s:"C",t:"えっと…青と白の看板です！"},
+  {s:"D",t:"ローソンですね。入口にからあげクンのポスターは見えますか？"},
+  {s:"C",t:"あ、はい！からあげクンあります！ローソンです！",a:{type:"sv_gallery_narrow",name:"ローソン松戸駅東口店"}},
+  {s:"S",t:"✓ 場所特定: ローソン松戸駅東口店 付近",a:{type:"highlight_lm",name:"ローソン松戸駅東口店"}},
+  {s:"D",t:"ローソン松戸駅東口店の前ですね。すぐに救急車を向かわせます。"},
+  {s:"C",t:"お願いします！"},
+  {s:"S",t:"📍 場所確定: ローソン松戸駅東口店前（松戸市松戸）",a:{type:"confirm_lm"}},
 ]};
 
 /* ═══════════════════ 3. MAP ═══════════════════ */
@@ -216,25 +249,43 @@ window.openSV=openSV;
 
 /* ═══════════════════ 4b. SV GALLERY (multiple candidates) ═══════════════════ */
 const catNames={intersection:"交差点",convenience_store:"コンビニ",gas_station:"ガソリンスタンド",store:"店舗",school:"学校",temple_shrine:"神社・寺",parking:"駐車場"};
+let galMarkers=[];
 
 function svEmbedUrl(lat,lng,heading){
   return`https://maps.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=12,${heading||0},0,0,0&output=svembed`;
 }
 
+function clearGalMarkers(){galMarkers.forEach(m=>m.remove());galMarkers=[]}
+
 function showSVGallery(cat){
-  const a=DEMO.area_b,g=a.gps;
+  const a=DEMO[curScenario];
+  if(!a||!a.landmarks||!a.gps)return;
+  const g=a.gps;
   const lms=a.landmarks.filter(l=>l.cat===cat).map(l=>({...l,d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})).sort((x,y)=>x.d-y.d);
   if(!lms.length)return;
   const show=lms.slice(0,5);
 
   aiHide();
+  clearGalMarkers();
+
+  // Add numbered markers on map
+  show.forEach((l,i)=>{
+    const el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=l.name+" ("+l.d+"m)";
+    el.addEventListener("click",e=>{e.stopPropagation();flyTo(l.lat,l.lng,18);openSV(l.lat,l.lng,l.heading||0);
+      // Also highlight in gallery
+      const ge=document.querySelector(`.svg-entry[data-name="${l.name}"]`);
+      if(ge){document.querySelectorAll(".svg-entry").forEach(x=>x.classList.remove("active"));ge.classList.add("active")}
+    });
+    const mk=new maplibregl.Marker({element:el}).setLngLat([l.lng,l.lat]).addTo(map);
+    galMarkers.push(mk);
+  });
 
   const panel=document.getElementById("sv-gallery");
   const body=document.getElementById("svg-body");
   panel.querySelector(".svg-title").textContent="📷 "+(catNames[cat]||cat)+" のストリートビュー";
   panel.querySelector(".svg-count").textContent=show.length+"件";
 
-  body.innerHTML=show.map((l,i)=>`<div class="svg-entry" data-name="${esc(l.name)}" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}">
+  body.innerHTML=show.map((l,i)=>`<div class="svg-entry" data-name="${esc(l.name)}" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}" data-idx="${i}">
     <div class="svg-entry-hd">
       <span class="svg-rank">${i+1}</span>
       <span class="svg-icon">${catI(l.cat)}</span>
@@ -247,14 +298,17 @@ function showSVGallery(cat){
     </div>
   </div>`).join("");
 
-  // Header click → select + fly to
+  // Header click → select + fly to + highlight map marker
   body.querySelectorAll(".svg-entry-hd").forEach(hd=>{
     hd.addEventListener("click",function(e){
       if(e.target.closest(".svg-popup-btn"))return;
       const entry=this.closest(".svg-entry");
+      const idx=+entry.dataset.idx;
       body.querySelectorAll(".svg-entry").forEach(x=>x.classList.remove("active"));
       entry.classList.add("active");
       flyTo(+entry.dataset.lat,+entry.dataset.lng,18);
+      // Pulse the map marker
+      galMarkers.forEach((mk,mi)=>{const el=mk.getElement();if(el){el.style.transform=mi===idx?"scale(1.4)":"";el.style.boxShadow=mi===idx?"0 0 16px rgba(46,204,113,.8)":""}});
     });
   });
 
@@ -265,16 +319,6 @@ function showSVGallery(cat){
       const entry=this.closest(".svg-entry");
       openSV(+entry.dataset.lat,+entry.dataset.lng,+entry.dataset.h);
     });
-  });
-
-  // Highlight matching markers on map
-  markers.forEach(mk=>{
-    const el=mk.getElement();
-    if(el&&el.title){
-      const isMatch=show.some(l=>el.title.includes(l.name));
-      if(isMatch){el.style.transform="scale(1.3)";el.style.zIndex="10"}
-      else{el.style.transform="";el.style.zIndex=""}
-    }
   });
 
   panel.classList.remove("hidden");
@@ -298,14 +342,21 @@ function narrowSVGallery(name){
       el.classList.add("eliminated");
     }
   });
+  // Dim non-matching map markers
+  const matched=body.querySelector(".svg-entry.active");
+  const matchIdx=matched?+matched.dataset.idx:-1;
+  galMarkers.forEach((mk,mi)=>{
+    const el=mk.getElement();if(!el)return;
+    if(mi===matchIdx){el.classList.remove("dimmed")}
+    else{el.classList.add("dimmed")}
+  });
 }
 
 function hideSVGallery(){
   const panel=document.getElementById("sv-gallery");
   panel.classList.remove("visible");
   setTimeout(()=>panel.classList.add("hidden"),300);
-  // Reset marker highlights
-  markers.forEach(mk=>{const el=mk.getElement();if(el){el.style.transform="";el.style.zIndex=""}});
+  clearGalMarkers();
 }
 window.hideSVGallery=hideSVGallery;
 
@@ -327,6 +378,7 @@ function buildIndex(){
   });
   DEMO.area_a.pois.forEach(p=>ALL.push({type:"poi",text:p.name,name:p.name,cat:p.cat,lat:p.lat,lng:p.lng,area:"area_a"}));
   DEMO.area_b.landmarks.forEach(l=>ALL.push({type:"poi",text:l.name,name:l.name,cat:l.cat,lat:l.lat,lng:l.lng,area:"area_b"}));
+  DEMO.area_e.landmarks.forEach(l=>ALL.push({type:"poi",text:l.name,name:l.name,cat:l.cat,lat:l.lat,lng:l.lng,area:"area_e"}));
   ALL.push({type:"addr",text:DEMO.area_c.building.addr,bname:DEMO.area_c.building.name,lat:DEMO.area_c.building.lat,lng:DEMO.area_c.building.lng,area:"area_c"});
   DEMO.area_c.tenants.forEach(t=>ALL.push({type:"poi",text:t.name,name:t.name,cat:"tenant",lat:DEMO.area_c.building.lat,lng:DEMO.area_c.building.lng,area:"area_c"}));
   DEMO.area_d.mansions.forEach(m=>ALL.push({type:"addr",text:m.addr+" "+m.name,bname:m.name,bt:"mansion",fl:m.fl,lat:m.lat,lng:m.lng,area:"area_d"}));
@@ -412,25 +464,24 @@ function showT1(){
   attachQ();
 }
 
-/* ─── T3 ─── */
+/* ─── T3 (generic for any road-report scenario) ─── */
 function showT3(){
-  const a=DEMO.area_b,g=a.gps;
-  const lms=a.landmarks.map(l=>({...l,d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})).sort((a,b)=>a.d-b.d);
-  lms.forEach(l=>addM(l.lat,l.lng,{cls:"lm-m",label:catI(l.cat),title:l.name+" ("+l.d+"m)",click:()=>{flyTo(l.lat,l.lng,18);openSV(l.lat,l.lng)}}));
+  const a=DEMO[curScenario];
+  if(!a||!a.landmarks||!a.gps)return;
+  const g=a.gps;
+  const lms=a.landmarks.map(l=>({...l,d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})).sort((x,y)=>x.d-y.d);
+  lms.forEach(l=>addM(l.lat,l.lng,{cls:"lm-m",label:catI(l.cat),title:l.name+" ("+l.d+"m)",click:()=>{flyTo(l.lat,l.lng,18);openSV(l.lat,l.lng,l.heading||0)}}));
   let html=`<div class="ai-sec"><div class="ai-sec-title">周辺の目印（距離順・クリックでSV表示）</div>`;
-  lms.slice(0,8).forEach(l=>{html+=`<div class="lm-item" data-lat="${l.lat}" data-lng="${l.lng}"><span class="lm-icon">${catI(l.cat)}</span><span class="lm-name">${esc(l.name)}</span><span class="lm-dist">${l.d}m</span></div>`});
+  lms.slice(0,10).forEach(l=>{html+=`<div class="lm-item" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}"><span class="lm-icon">${catI(l.cat)}</span><span class="lm-name">${esc(l.name)}</span><span class="lm-dist">${l.d}m</span></div>`});
   html+=`</div>`;
-  const steps=[{q:"大きい道路沿いですか？細い道ですか？",o:["大きい道","細い道"],p:"道路種別の判定"},{q:"交差点の近くですか？",o:["はい","いいえ"],p:"交差点絞り込み"},{q:lms[0].name+"は見えますか？",o:["はい","いいえ"],p:"ランドマーク確認"},{q:"一番近い家の表札を読んでいただけますか？",o:[],p:"表札から逆引き"},{q:"近くの電柱に住所が書いてあります",o:["はい","いいえ"],p:"電柱住所"}];
-  html+=`<div class="ai-sec"><div class="ai-sec-title">絞り込みフロー</div>`;
-  steps.forEach((s,i)=>{html+=`<div class="nstep${i===0?" act":""}" data-step="${i}"><span class="step-n">${i+1}</span><span style="font-size:11px;color:#7f8c8d">${esc(s.p)}</span><div class="step-q">「${esc(s.q)}」</div>${s.o.length?`<div class="step-opts">${s.o.map(o=>`<button class="step-btn" data-s="${i}">${esc(o)}</button>`).join("")}</div>`:""}</div>`});
+  const cvs=lms.filter(l=>l.cat==="convenience_store").length;
+  const ixs=lms.filter(l=>l.cat==="intersection").length;
+  html+=`<div class="ai-sec"><div class="ai-sec-title">絞り込みヒント</div>`;
+  if(cvs>1)html+=`<div style="font-size:12px;color:#e67e22;padding:4px 8px">🏪 コンビニ ${cvs}件 — 通報者に看板を確認</div>`;
+  if(ixs>1)html+=`<div style="font-size:12px;color:#e67e22;padding:4px 8px">🚦 交差点 ${ixs}件 — 信号の有無を確認</div>`;
   html+=`</div>`;
   aiShow("#3498db","GPS","路上通報 — 場所の絞り込み","GPS精度: ±"+g.acc+"m",html);
-  document.querySelectorAll(".lm-item").forEach(el=>el.addEventListener("click",function(){flyTo(+this.dataset.lat,+this.dataset.lng,18);openSV(+this.dataset.lat,+this.dataset.lng)}));
-  document.querySelectorAll(".step-btn").forEach(b=>b.addEventListener("click",function(){
-    const s=+this.dataset.s,cur=document.querySelector(`.nstep[data-step="${s}"]`);
-    if(cur){cur.classList.remove("act");cur.classList.add("done");this.style.background="#27ae60";this.style.color="#fff"}
-    const nx=document.querySelector(`.nstep[data-step="${s+1}"]`);if(nx)nx.classList.add("act");
-  }));
+  document.querySelectorAll(".lm-item").forEach(el=>el.addEventListener("click",function(){flyTo(+this.dataset.lat,+this.dataset.lng,18);openSV(+this.dataset.lat,+this.dataset.lng,+this.dataset.h)}));
 }
 
 /* ─── T4 ─── */
@@ -531,10 +582,23 @@ function execAction(a){
   const t=a.type;
   if(t==="fly") flyTo(a.lat,a.lng,a.z||17);
   else if(t==="gps"){
-    const g=DEMO.area_b.gps;
-    clearM();flyTo(g.lat,g.lng,17);showGPS(g.lat,g.lng,g.acc);
-    addM(g.lat,g.lng,{cls:"gps-m",label:"📡",title:"GPS ±"+g.acc+"m"});
-    setGPSBadge(g.acc);
+    const d=DEMO[curScenario];
+    const gLat=a.lat||(d&&d.gps?d.gps.lat:0);
+    const gLng=a.lng||(d&&d.gps?d.gps.lng:0);
+    const gAcc=a.acc||(d&&d.gps?d.gps.acc:150);
+    if(d&&d.gps){d.gps.acc=gAcc}
+    clearM();flyTo(gLat,gLng,16);showGPS(gLat,gLng,gAcc);
+    addM(gLat,gLng,{cls:"gps-m",label:"📡",title:"GPS ±"+gAcc+"m"});
+    setGPSBadge(gAcc);
+  }
+  else if(t==="gps_update"){
+    const d=DEMO[curScenario];
+    const gLat=a.lat||(d&&d.gps?d.gps.lat:0);
+    const gLng=a.lng||(d&&d.gps?d.gps.lng:0);
+    const gAcc=a.acc||50;
+    if(d&&d.gps){d.gps.acc=gAcc}
+    showGPS(gLat,gLng,gAcc);
+    setGPSBadge(gAcc);
   }
   else if(t==="markers_t1"){
     clearM();
@@ -576,8 +640,9 @@ function execAction(a){
     if(b){addM(b.lat,b.lng,{cls:"ok-m",label:"✓",title:"特定: "+b.np+"宅"});flyTo(b.lat,b.lng,19);openSV(b.lat,b.lng,(b.eb+180)%360)}
   }
   else if(t==="highlight_lm"){
-    const lm=DEMO.area_b.landmarks.find(l=>l.name===a.name);
-    if(lm){addM(lm.lat,lm.lng,{cls:"ok-m",label:"✓",title:"特定: "+lm.name});flyTo(lm.lat,lm.lng,19);openSV(lm.lat,lm.lng,lm.heading||0)}
+    const d=DEMO[curScenario];
+    const lm=d&&d.landmarks?d.landmarks.find(l=>l.name===a.name):null;
+    if(lm){clearGalMarkers();addM(lm.lat,lm.lng,{cls:"ok-m",label:"✓",title:"特定: "+lm.name});flyTo(lm.lat,lm.lng,19);openSV(lm.lat,lm.lng,lm.heading||0)}
   }
   else if(t==="highlight_c"){
     addM(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,{cls:"ok-m",label:"✓",title:"確認一致"});flyTo(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,19);
@@ -594,7 +659,7 @@ function execAction(a){
 }
 
 function resetUI(){
-  clearM();clearGPS();aiHide();hideAerial();closeSV();hideSVGallery();
+  clearM();clearGalMarkers();clearGPS();aiHide();hideAerial();closeSV();hideSVGallery();
   setBadge("call-status","idle","待機中");setAI("ai-idle","AI: 待機中");setGPSBadge(null);
 }
 

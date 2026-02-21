@@ -183,6 +183,8 @@ body{font-family:'Hiragino Kaku Gothic ProN',Meiryo,'Noto Sans JP',sans-serif;ov
 .marker.search-m{background:#8e44ad;animation:pulse-m 2s infinite}
 .marker.lm-m{background:#f39c12}
 .marker.ok-m{background:#27ae60}
+.marker.svg-num-m{background:#2ecc71;width:34px;height:34px;font-size:16px;border:3px solid #fff;box-shadow:0 2px 10px rgba(46,204,113,.5);z-index:5}
+.marker.svg-num-m.dimmed{opacity:.25;transform:scale(.7);pointer-events:none}
 @keyframes pulse-m{0%,100%{box-shadow:0 0 0 0 rgba(142,68,173,.4)}50%{box-shadow:0 0 0 12px rgba(142,68,173,0)}}
 
 /* ══════════ Transcript Bar ══════════ */
