@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>119番 住所特定AI支援 地図システム</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Status Bar -->
+  <header id="status-bar">
+    <div class="sb-left">
+      <span id="call-status" class="badge idle">待機中</span>
+      <span id="call-timer" class="timer">00:00</span>
+    </div>
+    <div class="sb-center">119番 住所特定AI支援 地図システム</div>
+    <div class="sb-right">
+      <span id="gps-badge" class="badge gps-none">GPS: --</span>
+      <span id="ai-badge" class="badge ai-idle">AI: 待機中</span>
+    </div>
+  </header>
+
+  <!-- Search Bar -->
+  <div id="search-wrap">
+    <div id="search-box">
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg>
+      <input id="search-input" type="text" placeholder="住所・建物名・表札名を入力..." autocomplete="off">
+      <button id="search-clear" class="hidden">&times;</button>
+    </div>
+    <div id="search-results" class="hidden"></div>
+  </div>
+
+  <!-- Map -->
+  <div id="map"></div>
+
+  <!-- Layer Toggle -->
+  <div id="layer-toggle">
+    <button class="layer-btn active" data-layer="osm">地図</button>
+    <button class="layer-btn" data-layer="aerial">航空写真</button>
+    <button class="layer-btn" data-layer="hybrid">地図+写真</button>
+  </div>
+
+  <!-- Aerial Panel -->
+  <div id="aerial-panel" class="panel hidden">
+    <div class="panel-hd"><span>航空写真</span><button class="panel-x">&times;</button></div>
+    <div id="aerial-map" class="panel-body"></div>
+  </div>
+
+  <!-- StreetView Substitute Panel -->
+  <div id="sv-panel" class="panel hidden">
+    <div class="panel-hd"><span>ストリートビュー (航空写真)</span><button class="panel-x">&times;</button></div>
+    <div id="sv-body" class="panel-body">
+      <div class="sv-placeholder">
+        <div class="sv-ph-icon">&#128065;</div>
+        <p>地点を選択してください</p>
+        <p class="muted">右クリック →「ストリートビュー表示」</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Dialog -->
+  <div id="ai-dialog" class="hidden">
+    <div class="ai-hd">
+      <div class="ai-hd-left"><span class="ai-icon">AI</span><span id="ai-title">AI支援</span></div>
+      <button id="ai-close" class="panel-x">&times;</button>
+    </div>
+    <div id="ai-subtitle" class="ai-sub"></div>
+    <div id="ai-body"></div>
+  </div>
+
+  <!-- Context Menu -->
+  <div id="ctx-menu" class="hidden">
+    <div class="ctx-item" data-action="sv">&#128065; この地点のストリートビューを表示</div>
+    <div class="ctx-item" data-action="nearby">&#128269; この地点を中心に周辺検索</div>
+    <div class="ctx-item" data-action="reverse">&#128205; この地点の住所を取得</div>
+    <div class="ctx-item" data-action="aerial">&#128752; 航空写真で確認</div>
+  </div>
+
+  <!-- Demo Simulator -->
+  <footer id="demo-bar">
+    <div class="demo-sec">
+      <label>シナリオ:</label>
+      <select id="demo-scenario">
+        <option value="area_a">A: 同一番地密集（松戸）</option>
+        <option value="area_b">B: 路上通報（柏）</option>
+        <option value="area_c">C: テナント変更（流山）</option>
+        <option value="area_d">D: 類似マンション（鎌ケ谷）</option>
+      </select>
+    </div>
+    <div class="demo-sec">
+      <button id="btn-start" class="dbtn red">通報開始</button>
+      <button id="btn-end" class="dbtn gray" disabled>通報終了</button>
+    </div>
+    <div class="demo-sec">
+      <button id="btn-gps" class="dbtn blue" disabled>GPS送信</button>
+      <button id="btn-search" class="dbtn purple" disabled>住所検索シミュレート</button>
+    </div>
+    <div class="demo-sec">
+      <button id="btn-skip15" class="dbtn dark" disabled>+15秒</button>
+      <button id="btn-skip20" class="dbtn dark" disabled>+20秒</button>
+    </div>
+    <div class="demo-sec demo-right"><span id="demo-status">デモモード: 待機中</span></div>
+  </footer>
+
+  <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
