@@ -1,0 +1,313 @@
+{
+  "areas": {
+    "area_a": {
+      "id": "area_a",
+      "name": "同一番地密集地区（松戸駅付近）",
+      "center": [139.9011, 35.7838],
+      "common_address": "松戸市松戸1234番地",
+      "buildings": [
+        {
+          "id": "A1",
+          "nameplate": "鈴木",
+          "go": null,
+          "type": "detached",
+          "floors": 2,
+          "lat": 35.78385,
+          "lng": 139.90105,
+          "entrance_bearing": 180,
+          "address": {
+            "prefecture": "千葉県",
+            "city": "松戸市",
+            "town": "松戸",
+            "chome": null,
+            "banchi": "1234",
+            "go": null,
+            "full": "千葉県松戸市松戸1234番地"
+          },
+          "features": {
+            "position": "角地（T字路の角）",
+            "right": "田中",
+            "left": "(道路)",
+            "across": "セブンイレブン",
+            "back": "山本"
+          }
+        },
+        {
+          "id": "A2",
+          "nameplate": "山田",
+          "go": null,
+          "type": "detached",
+          "floors": 2,
+          "lat": 35.78375,
+          "lng": 139.90115,
+          "entrance_bearing": 180,
+          "address": {
+            "prefecture": "千葉県",
+            "city": "松戸市",
+            "town": "松戸",
+            "chome": null,
+            "banchi": "1234",
+            "go": null,
+            "full": "千葉県松戸市松戸1234番地"
+          },
+          "features": {
+            "position": "並びの2軒目",
+            "right": "佐藤",
+            "left": "鈴木",
+            "across": "月極駐車場",
+            "back": "山本"
+          }
+        },
+        {
+          "id": "A3",
+          "nameplate": "佐藤",
+          "go": null,
+          "type": "detached",
+          "floors": 2,
+          "lat": 35.78365,
+          "lng": 139.90125,
+          "entrance_bearing": 180,
+          "address": {
+            "prefecture": "千葉県",
+            "city": "松戸市",
+            "town": "松戸",
+            "chome": null,
+            "banchi": "1234",
+            "go": null,
+            "full": "千葉県松戸市松戸1234番地"
+          },
+          "features": {
+            "position": "公園の隣",
+            "right": "高橋",
+            "left": "山田",
+            "across": "松戸中央公園入口",
+            "back": "中村"
+          }
+        },
+        {
+          "id": "A4",
+          "nameplate": "高橋",
+          "go": null,
+          "type": "apartment",
+          "floors": 3,
+          "lat": 35.78355,
+          "lng": 139.90135,
+          "entrance_bearing": 180,
+          "address": {
+            "prefecture": "千葉県",
+            "city": "松戸市",
+            "town": "松戸",
+            "chome": null,
+            "banchi": "1234",
+            "go": null,
+            "full": "千葉県松戸市松戸1234番地"
+          },
+          "features": {
+            "position": "3階建てアパート",
+            "right": "渡辺",
+            "left": "佐藤",
+            "across": "松戸中央公園",
+            "back": "小林"
+          }
+        },
+        {
+          "id": "A5",
+          "nameplate": "渡辺",
+          "go": null,
+          "type": "detached",
+          "floors": 2,
+          "lat": 35.78345,
+          "lng": 139.90145,
+          "entrance_bearing": 180,
+          "address": {
+            "prefecture": "千葉県",
+            "city": "松戸市",
+            "town": "松戸",
+            "chome": null,
+            "banchi": "1234",
+            "go": null,
+            "full": "千葉県松戸市松戸1234番地"
+          },
+          "features": {
+            "position": "突き当たり（行き止まり）",
+            "right": "(壁/行き止まり)",
+            "left": "高橋",
+            "across": "(空き地)",
+            "back": "加藤"
+          }
+        }
+      ],
+      "surrounding_pois": [
+        { "name": "セブンイレブン松戸駅前店", "category": "convenience_store", "lat": 35.78390, "lng": 139.90090 },
+        { "name": "松戸中央公園", "category": "park", "lat": 35.78360, "lng": 139.90090 },
+        { "name": "月極駐車場", "category": "parking", "lat": 35.78378, "lng": 139.90090 }
+      ],
+      "decision_tree": {
+        "q": "角の家ですか？",
+        "yes": { "result": "A1", "label": "❶ 鈴木宅" },
+        "no": {
+          "q": "突き当たりの家ですか？",
+          "yes": { "result": "A5", "label": "❺ 渡辺宅" },
+          "no": {
+            "q": "向かいに公園は見えますか？",
+            "yes": {
+              "q": "3階建てですか？",
+              "yes": { "result": "A4", "label": "❹ 高橋宅" },
+              "no": { "result": "A3", "label": "❸ 佐藤宅" }
+            },
+            "no": { "result": "A2", "label": "❷ 山田宅" }
+          }
+        }
+      }
+    },
+    "area_b": {
+      "id": "area_b",
+      "name": "路上通報想定地区（柏駅付近）",
+      "center": [139.9757, 35.8681],
+      "gps_simulation": {
+        "true_location": { "lat": 35.8683, "lng": 139.9760, "desc": "柏駅東口の県道沿い" },
+        "reported_gps": { "lat": 35.8680, "lng": 139.9755, "accuracy_m": 150 }
+      },
+      "landmarks": [
+        { "name": "柏駅前交差点", "category": "intersection", "lat": 35.8685, "lng": 139.9762, "signal": true },
+        { "name": "ファミリーマート柏駅東口店", "category": "convenience_store", "lat": 35.8678, "lng": 139.9758 },
+        { "name": "ENEOS 柏中央SS", "category": "gas_station", "lat": 35.8675, "lng": 139.9750 },
+        { "name": "柏市立柏第一小学校", "category": "school", "lat": 35.8690, "lng": 139.9745 },
+        { "name": "柏神社", "category": "temple_shrine", "lat": 35.8688, "lng": 139.9768 }
+      ],
+      "nearest_house": {
+        "address": "柏市柏3-5-12",
+        "nameplate": "松本",
+        "lat": 35.8681,
+        "lng": 139.9763
+      },
+      "narrowing_steps": [
+        {
+          "step": 1,
+          "question": "大きい道路沿いですか？細い道ですか？",
+          "options": ["大きい道", "細い道"],
+          "purpose": "幹線道路/生活道路の判定"
+        },
+        {
+          "step": 2,
+          "question": "交差点の近くですか？",
+          "options": ["はい", "いいえ"],
+          "purpose": "交差点への絞り込み"
+        },
+        {
+          "step": 3,
+          "question": null,
+          "dynamic": true,
+          "template": "{landmark}は見えますか？",
+          "purpose": "ランドマークでの位置確認"
+        },
+        {
+          "step": 4,
+          "question": "一番近い家の表札を読んでいただけますか？",
+          "options": ["input"],
+          "purpose": "表札から住所を逆引き"
+        },
+        {
+          "step": 5,
+          "question": "近くの電柱に住所が書いてあります。見えますか？",
+          "options": ["はい", "いいえ"],
+          "purpose": "電柱記載の住所からの特定"
+        }
+      ]
+    },
+    "area_c": {
+      "id": "area_c",
+      "name": "テナント変更地区（流山おおたかの森）",
+      "center": [139.9290, 35.8717],
+      "scenario": {
+        "caller_says": "ABCコンサルティングの前です",
+        "search_query": "ABCコンサルティング",
+        "local_db": {
+          "name": "大成ビル",
+          "address": "流山市おおたかの森北1-2-3",
+          "full_address": "千葉県流山市おおたかの森北1-2-3",
+          "lat": 35.8717,
+          "lng": 139.9290,
+          "registered": "2019年"
+        },
+        "external_result": {
+          "name": "ABCコンサルティング",
+          "address": "流山市おおたかの森北1-2-3 大成ビル3F",
+          "full_address": "千葉県流山市おおたかの森北1-2-3 大成ビル3F",
+          "lat": 35.8717,
+          "lng": 139.9290
+        },
+        "tenants": [
+          { "floor": 1, "name": "スターバックス おおたかの森店" },
+          { "floor": 2, "name": "ABC英会話スクール" },
+          { "floor": 3, "name": "ABCコンサルティング" },
+          { "floor": 4, "name": "流山税理士事務所" }
+        ]
+      }
+    },
+    "area_d": {
+      "id": "area_d",
+      "name": "類似マンション地区（鎌ケ谷）",
+      "center": [140.0010, 35.7700],
+      "mansions": [
+        {
+          "id": "D1",
+          "name": "ライオンズマンション鎌ケ谷第一",
+          "address": "鎌ケ谷市新鎌ケ谷1-10-1",
+          "full_address": "千葉県鎌ケ谷市新鎌ケ谷1-10-1",
+          "lat": 35.7703,
+          "lng": 140.0008,
+          "floors": 14,
+          "units": 120,
+          "features": ["道路沿い", "14階建て", "1階にローソンあり"],
+          "distinguishing": "道路沿いの棟・14階建て・1階にローソン"
+        },
+        {
+          "id": "D2",
+          "name": "ライオンズマンション鎌ケ谷第二",
+          "address": "鎌ケ谷市新鎌ケ谷1-10-5",
+          "full_address": "千葉県鎌ケ谷市新鎌ケ谷1-10-5",
+          "lat": 35.7698,
+          "lng": 140.0015,
+          "floors": 8,
+          "units": 64,
+          "features": ["奥の棟（道路から入る）", "8階建て", "向かいに公園"],
+          "distinguishing": "奥の棟・8階建て・向かいに公園"
+        },
+        {
+          "id": "D3",
+          "name": "ライオンズマンション鎌ケ谷第三",
+          "address": "鎌ケ谷市新鎌ケ谷2-3-1",
+          "full_address": "千葉県鎌ケ谷市新鎌ケ谷2-3-1",
+          "lat": 35.7710,
+          "lng": 140.0020,
+          "floors": 10,
+          "units": 80,
+          "features": ["線路沿い", "10階建て", "左にコンビニ"],
+          "distinguishing": "線路沿い・10階建て・左にコンビニ"
+        }
+      ],
+      "decision_tree": {
+        "q": "何階建てのマンションですか？",
+        "options": {
+          "14階": { "result": "D1", "label": "ライオンズマンション鎌ケ谷第一" },
+          "8階": { "result": "D2", "label": "ライオンズマンション鎌ケ谷第二" },
+          "10階": { "result": "D3", "label": "ライオンズマンション鎌ケ谷第三" },
+          "不明": {
+            "q": "1階にコンビニは入っていますか？",
+            "options": {
+              "はい": {
+                "q": "ローソンですか？",
+                "options": {
+                  "はい": { "result": "D1", "label": "ライオンズマンション鎌ケ谷第一" },
+                  "いいえ": { "result": "D3", "label": "ライオンズマンション鎌ケ谷第三（左にコンビニ）" }
+                }
+              },
+              "いいえ": { "result": "D2", "label": "ライオンズマンション鎌ケ谷第二" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
