@@ -11,7 +11,7 @@ const GSI="https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg";
 const esc=s=>s?String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"):"";
 const hav=(a,b,c,d)=>{const R=6371e3,p=Math.PI/180,x=Math.sin((c-a)*p/2)**2+Math.cos(a*p)*Math.cos(c*p)*Math.sin((d-b)*p/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))};
 const typeL=t=>({detached:"戸建て",apartment:"アパート",mansion:"マンション",store:"店舗",office:"ビル"})[t]||"";
-const catI=c=>({intersection:"🚦",convenience_store:"🏪",gas_station:"⛽",park:"🌳",school:"🏫",temple_shrine:"⛩",parking:"🅿",tenant:"🏢"})[c]||"📍";
+const catI=c=>({intersection:"🚦",convenience_store:"🏪",gas_station:"⛽",park:"🌳",school:"🏫",temple_shrine:"⛩",parking:"🅿",tenant:"🏢",store:"🏬"})[c]||"📍";
 
 /* ═══════════════════ 1. DEMO DATA ═══════════════════ */
 const DEMO={
@@ -29,11 +29,16 @@ area_a:{id:"area_a",name:"同一番地密集地区（松戸駅付近）",center:
 area_b:{id:"area_b",name:"路上通報想定地区（柏駅付近）",center:[139.9757,35.8681],
   gps:{lat:35.8680,lng:139.9755,acc:150},
   landmarks:[
-    {name:"柏駅前交差点",cat:"intersection",lat:35.8685,lng:139.9762},
-    {name:"ファミリーマート柏駅東口店",cat:"convenience_store",lat:35.8678,lng:139.9758},
-    {name:"ENEOS 柏中央SS",cat:"gas_station",lat:35.8675,lng:139.9750},
-    {name:"柏市立柏第一小学校",cat:"school",lat:35.8690,lng:139.9745},
-    {name:"柏神社",cat:"temple_shrine",lat:35.8688,lng:139.9768}
+    {name:"柏駅前交差点",cat:"intersection",lat:35.8685,lng:139.9762,heading:45},
+    {name:"柏駅南口交差点",cat:"intersection",lat:35.8672,lng:139.9748,heading:180},
+    {name:"ファミリーマート柏駅東口店",cat:"convenience_store",lat:35.8678,lng:139.9758,heading:270},
+    {name:"セブンイレブン柏中央店",cat:"convenience_store",lat:35.8683,lng:139.9745,heading:90},
+    {name:"ローソン柏駅南口店",cat:"convenience_store",lat:35.8670,lng:139.9760,heading:0},
+    {name:"ENEOS 柏中央SS",cat:"gas_station",lat:35.8675,lng:139.9750,heading:180},
+    {name:"柏市立柏第一小学校",cat:"school",lat:35.8690,lng:139.9745,heading:0},
+    {name:"柏神社",cat:"temple_shrine",lat:35.8688,lng:139.9768,heading:270},
+    {name:"マツモトキヨシ柏駅前店",cat:"store",lat:35.8680,lng:139.9770,heading:90},
+    {name:"タイムズ柏駅前駐車場",cat:"parking",lat:35.8676,lng:139.9742,heading:0}
   ]
 },
 area_c:{id:"area_c",name:"テナント変更地区（流山おおたかの森）",center:[139.9290,35.8717],
@@ -78,20 +83,20 @@ area_a:[
 area_b:[
   {s:"C",t:"あの、事故です！車と自転車がぶつかって…！"},
   {s:"D",t:"119番消防です。おケガされた方はいますか？"},
-  {s:"C",t:"はい、自転車の人が倒れてます！"},
-  {s:"D",t:"場所はどちらですか？"},
-  {s:"C",t:"えっと…柏駅の近くなんですけど、正確な住所がわからなくて…"},
-  {s:"D",t:"大丈夫です。お電話のGPS情報を確認しますね。"},
+  {s:"C",t:"はい、自転車の人が倒れてます！場所は柏駅の近くですが、住所がわかりません…"},
+  {s:"D",t:"大丈夫です。GPS情報を確認しますね。",a:{type:"fly",lat:35.8681,lng:139.9757,z:15}},
   {s:"S",t:"📡 GPS受信: 35.8680, 139.9755（精度 ±150m）",a:{type:"gps"}},
   {s:"S",t:"⚡ T3発火: 路上通報 — GPS誤差円+周辺ランドマーク表示",a:{type:"trigger_t3"}},
-  {s:"D",t:"GPS情報が入りました。大きい道路沿いですか？細い道ですか？"},
-  {s:"C",t:"大きい道路です！車がたくさん走ってます。"},
-  {s:"D",t:"交差点の近くですか？"},
-  {s:"C",t:"はい！信号のある交差点のすぐそばです。"},
-  {s:"D",t:"ファミリーマートは見えますか？",a:{type:"sv",lat:35.8678,lng:139.9758,h:0}},
-  {s:"C",t:"はい！見えます！ファミマのすぐ前です！"},
+  {s:"D",t:"GPS情報が入りました。大きい道路沿いですか？交差点の近くですか？"},
+  {s:"C",t:"はい！大きい道路で、信号のある交差点のすぐそばです！",a:{type:"sv_gallery",cat:"intersection"}},
+  {s:"S",t:"🚦 交差点候補: 2件 — 右パネルにストリートビュー表示"},
+  {s:"D",t:"近くにコンビニやお店は見えますか？"},
+  {s:"C",t:"コンビニが見えます！",a:{type:"sv_gallery",cat:"convenience_store"}},
+  {s:"S",t:"🏪 コンビニ候補: 3件 — 距離順にストリートビュー表示中"},
+  {s:"D",t:"何のコンビニですか？ファミリーマート？セブンイレブン？ローソン？"},
+  {s:"C",t:"ファミリーマートです！ファミマのすぐ前です！",a:{type:"sv_gallery_narrow",name:"ファミリーマート柏駅東口店"}},
   {s:"S",t:"✓ 場所特定: ファミリーマート柏駅東口店 付近",a:{type:"highlight_lm",name:"ファミリーマート柏駅東口店"}},
-  {s:"D",t:"ファミリーマート柏駅東口店の前ですね。すぐに救急車と消防車を向かわせます。"},
+  {s:"D",t:"ファミリーマート柏駅東口店の前ですね。すぐに救急車を向かわせます。"},
   {s:"C",t:"お願いします！急いでください！"},
   {s:"S",t:"📍 場所確定: ファミリーマート柏駅東口店前（柏市柏）",a:{type:"confirm_lm"}},
 ],
@@ -208,6 +213,85 @@ function openSV(lat,lng,heading){
 }
 window.closeSV=function(){document.getElementById("sv-indicator").classList.add("hidden");if(svWin&&!svWin.closed)svWin.close();svWin=null};
 window.openSV=openSV;
+
+/* ═══════════════════ 4b. SV GALLERY (multiple candidates) ═══════════════════ */
+const catNames={intersection:"交差点",convenience_store:"コンビニ",gas_station:"ガソリンスタンド",store:"店舗",school:"学校",temple_shrine:"神社・寺",parking:"駐車場"};
+
+function showSVGallery(cat){
+  const a=DEMO.area_b,g=a.gps;
+  const lms=a.landmarks.filter(l=>l.cat===cat).map(l=>({...l,d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})).sort((x,y)=>x.d-y.d);
+  if(!lms.length)return;
+
+  // Hide AI dialog to avoid overlap
+  aiHide();
+
+  const panel=document.getElementById("sv-gallery");
+  const body=document.getElementById("svg-body");
+  panel.querySelector(".svg-title").textContent="📷 "+(catNames[cat]||cat)+" のストリートビュー";
+  panel.querySelector(".svg-count").textContent=lms.length+"件";
+
+  body.innerHTML=lms.map((l,i)=>`<div class="svg-entry" data-name="${esc(l.name)}" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}">
+    <div class="svg-entry-hd">
+      <span class="svg-rank">${i+1}</span>
+      <span class="svg-icon">${catI(l.cat)}</span>
+      <span class="svg-name">${esc(l.name)}</span>
+      <span class="svg-dist">${l.d}m</span>
+    </div>
+    <div class="svg-sv-btn">📷 ストリートビューを表示</div>
+  </div>`).join("");
+
+  body.querySelectorAll(".svg-entry").forEach(el=>{
+    el.addEventListener("click",function(){
+      body.querySelectorAll(".svg-entry").forEach(e=>e.classList.remove("active"));
+      this.classList.add("active");
+      flyTo(+this.dataset.lat,+this.dataset.lng,18);
+      openSV(+this.dataset.lat,+this.dataset.lng,+this.dataset.h);
+    });
+  });
+
+  // Highlight matching markers on map
+  markers.forEach(mk=>{
+    const el=mk.getElement();
+    if(el&&el.title){
+      const isMatch=lms.some(l=>el.title.includes(l.name));
+      if(isMatch){el.style.transform="scale(1.3)";el.style.zIndex="10"}
+      else{el.style.transform="";el.style.zIndex=""}
+    }
+  });
+
+  panel.classList.remove("hidden");
+  requestAnimationFrame(()=>panel.classList.add("visible"));
+}
+
+function narrowSVGallery(name){
+  const body=document.getElementById("svg-body");
+  body.querySelectorAll(".svg-entry").forEach(el=>{
+    if(el.dataset.name===name){
+      el.classList.add("active");
+      el.classList.remove("eliminated");
+      // Add match label
+      if(!el.querySelector(".svg-match-label")){
+        const lbl=document.createElement("div");
+        lbl.className="svg-match-label";
+        lbl.textContent="✓ 通報者の発言と一致";
+        el.appendChild(lbl);
+      }
+      flyTo(+el.dataset.lat,+el.dataset.lng,18);
+      openSV(+el.dataset.lat,+el.dataset.lng,+el.dataset.h);
+    }else{
+      el.classList.add("eliminated");
+    }
+  });
+}
+
+function hideSVGallery(){
+  const panel=document.getElementById("sv-gallery");
+  panel.classList.remove("visible");
+  setTimeout(()=>panel.classList.add("hidden"),300);
+  // Reset marker highlights
+  markers.forEach(mk=>{const el=mk.getElement();if(el){el.style.transform="";el.style.zIndex=""}});
+}
+window.hideSVGallery=hideSVGallery;
 
 /* ═══════════════════ 5. AERIAL PANEL ═══════════════════ */
 let aerialMap=null;
@@ -477,7 +561,7 @@ function execAction(a){
   }
   else if(t==="highlight_lm"){
     const lm=DEMO.area_b.landmarks.find(l=>l.name===a.name);
-    if(lm){addM(lm.lat,lm.lng,{cls:"ok-m",label:"✓",title:"特定: "+lm.name});flyTo(lm.lat,lm.lng,19);openSV(lm.lat,lm.lng)}
+    if(lm){addM(lm.lat,lm.lng,{cls:"ok-m",label:"✓",title:"特定: "+lm.name});flyTo(lm.lat,lm.lng,19);openSV(lm.lat,lm.lng,lm.heading||0)}
   }
   else if(t==="highlight_c"){
     addM(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,{cls:"ok-m",label:"✓",title:"確認一致"});flyTo(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,19);
@@ -486,13 +570,15 @@ function execAction(a){
     const m=DEMO.area_d.mansions.find(x=>x.id===a.id);
     if(m){addM(m.lat,m.lng,{cls:"ok-m",label:"✓",title:"特定: "+m.name});flyTo(m.lat,m.lng,19);openSV(m.lat,m.lng)}
   }
+  else if(t==="sv_gallery") showSVGallery(a.cat);
+  else if(t==="sv_gallery_narrow") narrowSVGallery(a.name);
   else if(t==="confirm"||t==="confirm_lm"||t==="confirm_c"||t==="confirm_d"){
-    setBadge("call-status","confirmed","確定済み");setAI("ai-idle","AI: 待機中");
+    setBadge("call-status","confirmed","確定済み");setAI("ai-idle","AI: 待機中");hideSVGallery();
   }
 }
 
 function resetUI(){
-  clearM();clearGPS();aiHide();hideAerial();closeSV();
+  clearM();clearGPS();aiHide();hideAerial();closeSV();hideSVGallery();
   setBadge("call-status","idle","待機中");setAI("ai-idle","AI: 待機中");setGPSBadge(null);
 }
 
