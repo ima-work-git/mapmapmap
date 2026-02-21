@@ -54,15 +54,15 @@ area_d:{id:"area_d",name:"類似マンション地区（鎌ケ谷）",center:[14
   ],
   dtree:{q:"何階建てのマンションですか？",options:{"14階":{result:"D1",label:"ライオンズマンション鎌ケ谷第一"},"8階":{result:"D2",label:"ライオンズマンション鎌ケ谷第二"},"10階":{result:"D3",label:"ライオンズマンション鎌ケ谷第三"},"不明":{q:"1階にコンビニは入っていますか？",options:{"はい":{q:"ローソンですか？",options:{"はい":{result:"D1",label:"第一（1階ローソン）"},"いいえ":{result:"D3",label:"第三（左にコンビニ）"}}},"いいえ":{result:"D2",label:"第二（向かいに公園）"}}}}}
 },
-area_e:{id:"area_e",name:"路上通報・複数コンビニ（松戸駅周辺）",center:[139.9008,35.7828],
-  gps:{lat:35.7825,lng:139.9005,acc:250},
+area_e:{id:"area_e",name:"路上通報・複数コンビニ（松戸駅周辺）",center:[139.9008,35.7840],
+  gps:{lat:35.7835,lng:139.9010,acc:250},
   landmarks:[
-    {name:"松戸駅前交差点",cat:"intersection",lat:35.7831,lng:139.9011,heading:0},
-    {name:"松戸中央通り交差点",cat:"intersection",lat:35.7818,lng:139.8998,heading:90},
-    {name:"セブン-イレブン松戸駅西口店",cat:"convenience_store",lat:35.7836,lng:139.8995,heading:90},
-    {name:"ファミリーマート松戸本町一丁目店",cat:"convenience_store",lat:35.7817,lng:139.9018,heading:315},
-    {name:"ローソン松戸駅東口店",cat:"convenience_store",lat:35.7838,lng:139.9022,heading:200},
-    {name:"ミニストップ松戸駅前店",cat:"convenience_store",lat:35.7822,lng:139.9002,heading:45},
+    {name:"松戸駅前交差点",cat:"intersection",lat:35.7840,lng:139.9012,heading:0},
+    {name:"岩瀬交差点",cat:"intersection",lat:35.7822,lng:139.9040,heading:90},
+    {name:"セブン-イレブン松戸駅前店",cat:"convenience_store",lat:35.7838,lng:139.8998,heading:90},
+    {name:"ファミリーマート松戸駅西口店",cat:"convenience_store",lat:35.7841,lng:139.8999,heading:0},
+    {name:"ローソン松戸駅東口店",cat:"convenience_store",lat:35.7839,lng:139.9018,heading:200},
+    {name:"ミニストップ松戸駅前店",cat:"convenience_store",lat:35.7857,lng:139.9024,heading:45},
     {name:"松戸駅前郵便局",cat:"store",lat:35.7828,lng:139.9015,heading:270},
     {name:"ENEOS松戸駅前SS",cat:"gas_station",lat:35.7813,lng:139.8995,heading:0},
     {name:"松戸中央公園",cat:"park",lat:35.7845,lng:139.8988,heading:135}
@@ -149,7 +149,7 @@ area_d:[
   {s:"S",t:"📍 住所確定: 千葉県鎌ケ谷市新鎌ケ谷1-10-1 ライオンズマンション鎌ケ谷第一 5階廊下",a:{type:"confirm_d",id:"D1"}},
 ],
 area_e:[
-  {s:"S",t:"📡 入電GPS: 35.7825, 139.9005（精度 ±250m — 測位中…）",a:{type:"gps",lat:35.7825,lng:139.9005,acc:250}},
+  {s:"S",t:"📡 入電GPS: 35.7835, 139.9010（精度 ±250m — 測位中…）",a:{type:"gps",lat:35.7835,lng:139.9010,acc:250}},
   {s:"C",t:"すみません、人が道で倒れてます！意識がないみたいです！"},
   {s:"D",t:"119番消防です。救急ですね。今どちらにいらっしゃいますか？"},
   {s:"C",t:"松戸駅の近くの道路なんですけど…住所がわからなくて…"},
