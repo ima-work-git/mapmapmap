@@ -217,35 +217,53 @@ window.openSV=openSV;
 /* ═══════════════════ 4b. SV GALLERY (multiple candidates) ═══════════════════ */
 const catNames={intersection:"交差点",convenience_store:"コンビニ",gas_station:"ガソリンスタンド",store:"店舗",school:"学校",temple_shrine:"神社・寺",parking:"駐車場"};
 
+function svEmbedUrl(lat,lng,heading){
+  return`https://maps.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=12,${heading||0},0,0,0&output=svembed`;
+}
+
 function showSVGallery(cat){
   const a=DEMO.area_b,g=a.gps;
   const lms=a.landmarks.filter(l=>l.cat===cat).map(l=>({...l,d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})).sort((x,y)=>x.d-y.d);
   if(!lms.length)return;
+  const show=lms.slice(0,5);
 
-  // Hide AI dialog to avoid overlap
   aiHide();
 
   const panel=document.getElementById("sv-gallery");
   const body=document.getElementById("svg-body");
   panel.querySelector(".svg-title").textContent="📷 "+(catNames[cat]||cat)+" のストリートビュー";
-  panel.querySelector(".svg-count").textContent=lms.length+"件";
+  panel.querySelector(".svg-count").textContent=show.length+"件";
 
-  body.innerHTML=lms.map((l,i)=>`<div class="svg-entry" data-name="${esc(l.name)}" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}">
+  body.innerHTML=show.map((l,i)=>`<div class="svg-entry" data-name="${esc(l.name)}" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}">
     <div class="svg-entry-hd">
       <span class="svg-rank">${i+1}</span>
       <span class="svg-icon">${catI(l.cat)}</span>
       <span class="svg-name">${esc(l.name)}</span>
       <span class="svg-dist">${l.d}m</span>
+      <button class="svg-popup-btn" title="別ウィンドウで拡大表示">⛶</button>
     </div>
-    <div class="svg-sv-btn">📷 ストリートビューを表示</div>
+    <div class="svg-frame-wrap">
+      <iframe class="svg-frame" src="${svEmbedUrl(l.lat,l.lng,l.heading)}" allowfullscreen loading="lazy" referrerpolicy="no-referrer"></iframe>
+    </div>
   </div>`).join("");
 
-  body.querySelectorAll(".svg-entry").forEach(el=>{
-    el.addEventListener("click",function(){
-      body.querySelectorAll(".svg-entry").forEach(e=>e.classList.remove("active"));
-      this.classList.add("active");
-      flyTo(+this.dataset.lat,+this.dataset.lng,18);
-      openSV(+this.dataset.lat,+this.dataset.lng,+this.dataset.h);
+  // Header click → select + fly to
+  body.querySelectorAll(".svg-entry-hd").forEach(hd=>{
+    hd.addEventListener("click",function(e){
+      if(e.target.closest(".svg-popup-btn"))return;
+      const entry=this.closest(".svg-entry");
+      body.querySelectorAll(".svg-entry").forEach(x=>x.classList.remove("active"));
+      entry.classList.add("active");
+      flyTo(+entry.dataset.lat,+entry.dataset.lng,18);
+    });
+  });
+
+  // Popup button → open SV in separate window
+  body.querySelectorAll(".svg-popup-btn").forEach(btn=>{
+    btn.addEventListener("click",function(e){
+      e.stopPropagation();
+      const entry=this.closest(".svg-entry");
+      openSV(+entry.dataset.lat,+entry.dataset.lng,+entry.dataset.h);
     });
   });
 
@@ -253,7 +271,7 @@ function showSVGallery(cat){
   markers.forEach(mk=>{
     const el=mk.getElement();
     if(el&&el.title){
-      const isMatch=lms.some(l=>el.title.includes(l.name));
+      const isMatch=show.some(l=>el.title.includes(l.name));
       if(isMatch){el.style.transform="scale(1.3)";el.style.zIndex="10"}
       else{el.style.transform="";el.style.zIndex=""}
     }
@@ -269,7 +287,6 @@ function narrowSVGallery(name){
     if(el.dataset.name===name){
       el.classList.add("active");
       el.classList.remove("eliminated");
-      // Add match label
       if(!el.querySelector(".svg-match-label")){
         const lbl=document.createElement("div");
         lbl.className="svg-match-label";
@@ -277,7 +294,6 @@ function narrowSVGallery(name){
         el.appendChild(lbl);
       }
       flyTo(+el.dataset.lat,+el.dataset.lng,18);
-      openSV(+el.dataset.lat,+el.dataset.lng,+el.dataset.h);
     }else{
       el.classList.add("eliminated");
     }
