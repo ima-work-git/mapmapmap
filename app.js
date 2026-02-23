@@ -318,7 +318,7 @@ function showSVGallery(cat){
       <button class="svg-popup-btn" title="パネルで拡大表示">⛶</button>
     </div>
     <div class="svg-frame-wrap">
-      <iframe class="svg-frame" src="${svEmbedUrl(l.lat,l.lng,l.heading)}" allowfullscreen loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <iframe class="svg-frame" src="${svEmbedUrl(l.lat,l.lng,l.heading)}" allowfullscreen loading="lazy"></iframe>
     </div>
   </div>`).join("");
 
