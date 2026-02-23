@@ -81,6 +81,31 @@ area_f:{id:"area_f",name:"類似団地棟地区（松戸・野菊野）",center:
     {name:"セブンイレブン松戸胡録台店",cat:"convenience_store",lat:35.7810,lng:139.9115}
   ],
   dtree:{q:"何号棟ですか？",options:{"1号棟":{result:"F1",label:"野菊野団地1号棟（14階建て・東端）"},"2号棟":{result:"F2",label:"野菊野団地2号棟（市場側）"},"3号棟":{result:"F3",label:"野菊野団地3号棟（8階建て・団地中央）"},"4号棟":{result:"F4",label:"野菊野団地4号棟（バス停ロータリー前）"},"5号棟":{result:"F5",label:"野菊野団地5号棟（敬老ホーム・西端）"},"わからない":{q:"建物は何階建てですか？",options:{"8階":{result:"F3",label:"3号棟（唯一の8階建て）"},"14階":{q:"近くに何が見えますか？",options:{"バス停・ロータリー":{result:"F4",label:"4号棟（バス停ロータリーが目の前）"},"市場・卸売場":{result:"F2",label:"2号棟（松戸南部市場が近い）"},"敬老ホーム・こども館":{result:"F5",label:"5号棟（1階に敬老ホーム）"},"どれも見えない":{result:"F1",label:"1号棟（東端・管理事務所近く）"}}}}}}}
+},
+area_g:{id:"area_g",name:"複合対応シナリオ（松戸・北松戸）",center:[139.9035,35.7945],
+  gps:{lat:35.7940,lng:139.9042,acc:300},
+  mansions:[
+    {id:"G1",name:"北松戸ビル",addr:"千葉県松戸市上本郷901-1",lat:35.7948,lng:139.9032,fl:7,units:14,feats:["駅ロータリー正面","7階建て","1階にドラッグストア"],dist:"駅正面・1階ドラッグストア"},
+    {id:"G2",name:"北松戸第2ビル",addr:"千葉県松戸市上本郷901-3",lat:35.7944,lng:139.9038,fl:5,units:10,feats:["駅から2棟目","5階建て","1階に不動産屋"],dist:"5階建て・1階不動産屋"},
+    {id:"G3",name:"北松戸第3ビル",addr:"千葉県松戸市上本郷902-1",lat:35.7940,lng:139.9046,fl:9,units:18,feats:["9階建て（最も高い）","交差点の角","1階にセブンイレブン"],dist:"9階建て・交差点角・1階セブンイレブン"}
+  ],
+  landmarks:[
+    {name:"北松戸駅前ロータリー",cat:"intersection",lat:35.7952,lng:139.9028,heading:180},
+    {name:"セブンイレブン北松戸駅東口店",cat:"convenience_store",lat:35.7940,lng:139.9047,heading:270},
+    {name:"北松戸交差点",cat:"intersection",lat:35.7937,lng:139.9050,heading:0},
+    {name:"上本郷公園",cat:"park",lat:35.7932,lng:139.9035,heading:90}
+  ],
+  pois:[
+    {name:"北松戸駅",cat:"intersection",lat:35.7952,lng:139.9028},
+    {name:"セブンイレブン北松戸駅東口店",cat:"convenience_store",lat:35.7940,lng:139.9047},
+    {name:"上本郷公園",cat:"park",lat:35.7932,lng:139.9035}
+  ],
+  tenants_g3:[
+    {fl:"B1",name:"ダーツバー North"},{fl:1,name:"セブンイレブン北松戸駅東口店"},{fl:2,name:"松戸北口整骨院"},
+    {fl:3,name:"個別指導WAM北松戸校"},{fl:4,name:"スナック都"},{fl:5,name:"北松戸内科クリニック"},
+    {fl:6,name:"弁護士法人みらい"},{fl:7,name:"（空室）"},{fl:8,name:"ITサポート松戸"},{fl:9,name:"屋上（機械室）"}
+  ],
+  dtree:{q:"ビルの名前はわかりますか？",options:{"北松戸ビル":{result:"G1",label:"北松戸ビル（駅正面・7階建て）"},"北松戸第2ビル":{result:"G2",label:"北松戸第2ビル（5階建て）"},"北松戸第3ビル":{result:"G3",label:"北松戸第3ビル（9階建て・交差点角）"},"わからない":{q:"建物は何階建てですか？",options:{"5階くらい":{result:"G2",label:"北松戸第2ビル（5階建て）"},"7階くらい":{result:"G1",label:"北松戸ビル（7階建て・駅正面）"},"9階以上":{result:"G3",label:"北松戸第3ビル（9階建て）"},"わからない":{q:"1階に何のお店がありますか？",options:{"ドラッグストア":{result:"G1",label:"北松戸ビル（1階ドラッグストア）"},"不動産屋":{result:"G2",label:"北松戸第2ビル（1階不動産屋）"},"コンビニ":{result:"G3",label:"北松戸第3ビル（1階セブンイレブン）"}}}}}}}
 }};
 
 /* ═══════════════════ 2. SCENARIO TRANSCRIPTS ═══════════════════ */
@@ -194,6 +219,34 @@ area_f:[
   {s:"D",t:"野菊野団地4号棟の10階ですね。すぐに救急車を向かわせます。",a:{type:"sv",lat:35.77934,lng:139.91395,h:0}},
   {s:"C",t:"お願いします！エレベーターの前で倒れています！"},
   {s:"S",t:"📍 住所確定: 千葉県松戸市野菊野 野菊野団地4号棟 10階エレベーター前",a:{type:"confirm_d",id:"F4"}},
+],
+area_g:[
+  /* Phase 1: GPS入電 */
+  {s:"S",t:"📡 入電GPS: 35.7940, 139.9042（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.7940,lng:139.9042,acc:300}},
+  {s:"C",t:"もしもし！ビルの中で人が倒れてます！救急車お願いします！"},
+  {s:"D",t:"119番消防です。救急ですね。場所はどちらですか？"},
+  {s:"C",t:"北松戸の駅の近くのビルです…住所がわかりません…"},
+  {s:"S",t:"📡 GPS更新: 精度向上 ±100m",a:{type:"gps_update",acc:100}},
+  /* Phase 2: ランドマーク確認 */
+  {s:"D",t:"北松戸駅の近くですね。確認します。",a:{type:"fly",lat:35.7940,lng:139.9042,z:17}},
+  {s:"S",t:"⚡ T3発火: GPS通報 — 周辺ランドマーク表示",a:{type:"trigger_t3"}},
+  {s:"D",t:"周りに何が見えますか？コンビニや交差点はありますか？"},
+  {s:"C",t:"1階にセブンイレブンが入っているビルです！交差点の角にあります！"},
+  /* Phase 3: 類似ビル特定 */
+  {s:"S",t:"住所検索: 「北松戸駅前 ビル」→ 3棟ヒット（北松戸ビル・第2ビル・第3ビル）",a:{type:"markers_t6"}},
+  {s:"S",t:"⚡ T6発火: 駅前に類似ビル3棟 — 特定支援パネル表示",a:{type:"trigger_t6"}},
+  {s:"D",t:"北松戸駅前にビルが3棟あります。ビルの名前はわかりますか？"},
+  {s:"C",t:"いえ、わかりません…",a:{type:"q_answer_d",ans:"わからない"}},
+  {s:"D",t:"建物は何階建てですか？"},
+  {s:"C",t:"高いです…9階か10階くらいあると思います",a:{type:"q_answer_d",ans:"9階以上"}},
+  {s:"S",t:"✓ 特定完了: 北松戸第3ビル（9階建て・交差点角・1階セブンイレブン）",a:{type:"highlight_d",id:"G3"}},
+  /* Phase 4: テナント照合 */
+  {s:"D",t:"北松戸第3ビルですね。何階で倒れていますか？"},
+  {s:"C",t:"4階です！お店の中で…スナックっていうのかな…"},
+  {s:"S",t:"🏢 テナント照合: 北松戸第3ビル4F =「スナック都」",a:{type:"show_tenants_g"}},
+  {s:"D",t:"4階のスナック都ですね。すぐに救急車を向かわせます。",a:{type:"sv",lat:35.7940,lng:139.9046,h:0}},
+  {s:"C",t:"お願いします！急いでください！"},
+  {s:"S",t:"📍 住所確定: 千葉県松戸市上本郷902-1 北松戸第3ビル4F スナック都",a:{type:"confirm_d",id:"G3"}},
 ]};
 
 /* ═══════════════════ 3. MAP ═══════════════════ */
@@ -408,6 +461,10 @@ function buildIndex(){
   DEMO.area_d.mansions.forEach(m=>ALL.push({type:"addr",text:m.addr+" "+m.name,bname:m.name,bt:"mansion",fl:m.fl,lat:m.lat,lng:m.lng,area:"area_d"}));
   DEMO.area_f.mansions.forEach(m=>ALL.push({type:"addr",text:m.addr+" "+m.name,bname:m.name,bt:"mansion",fl:m.fl,lat:m.lat,lng:m.lng,area:"area_f"}));
   DEMO.area_f.pois.forEach(p=>ALL.push({type:"poi",text:p.name,name:p.name,cat:p.cat,lat:p.lat,lng:p.lng,area:"area_f"}));
+  DEMO.area_g.mansions.forEach(m=>ALL.push({type:"addr",text:m.addr+" "+m.name,bname:m.name,bt:"mansion",fl:m.fl,lat:m.lat,lng:m.lng,area:"area_g"}));
+  DEMO.area_g.landmarks.forEach(l=>ALL.push({type:"poi",text:l.name,name:l.name,cat:l.cat,lat:l.lat,lng:l.lng,area:"area_g"}));
+  DEMO.area_g.pois.forEach(p=>ALL.push({type:"poi",text:p.name,name:p.name,cat:p.cat,lat:p.lat,lng:p.lng,area:"area_g"}));
+  DEMO.area_g.tenants_g3.forEach(r=>ALL.push({type:"poi",text:r.name,name:r.name,cat:"tenant",lat:DEMO.area_g.mansions[2].lat,lng:DEMO.area_g.mansions[2].lng,area:"area_g"}));
 }
 
 function initSearch(){
@@ -679,6 +736,12 @@ function execAction(a){
   else if(t==="highlight_d"){
     const m=(DEMO[curScenario].mansions||[]).find(x=>x.id===a.id);
     if(m){addM(m.lat,m.lng,{cls:"ok-m",label:"✓",title:"特定: "+m.name});flyTo(m.lat,m.lng,19);openSV(m.lat,m.lng)}
+  }
+  else if(t==="show_tenants_g"){
+    const ag=DEMO.area_g,ts=ag.tenants_g3,bld=ag.mansions.find(m=>m.id==="G3");
+    let html=`<div class="ai-sec"><div class="ai-sec-title">テナント一覧: ${esc(bld.name)}</div><div class="tenant-list">${ts.map(r=>`<div class="tenant-row${r.fl===4?" hl":""}"><span class="tenant-fl">${r.fl}F:</span><span class="tenant-nm">${esc(r.name)}</span></div>`).join("")}</div></div>`;
+    html+=`<div class="ai-sec"><div class="ai-sec-title">ビル情報</div><div style="font-size:12px;color:#2c3e50;padding:4px 8px">📍 ${esc(bld.addr)}<br>🏢 ${bld.fl}階建て・交差点角<br>📋 1階: セブンイレブン</div></div>`;
+    aiShow("#8e44ad","🏢","テナント照合",bld.name+" — 4F スナック都",html);
   }
   else if(t==="sv_gallery") showSVGallery(a.cat);
   else if(t==="sv_gallery_narrow") narrowSVGallery(a.name);
