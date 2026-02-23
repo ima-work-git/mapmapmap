@@ -30,7 +30,7 @@ area_b:{id:"area_b",name:"路上通報想定地区（柏駅付近）",center:[13
   gps:{lat:35.8668,lng:139.9765,acc:150},
   landmarks:[
     {name:"旧水戸街道入口",cat:"intersection",lat:35.8673,lng:139.9781,heading:220},
-    {name:"柏駅入口",cat:"intersection",lat:35.8636,lng:139.9680,heading:45},
+    {name:"柏駅西口",cat:"intersection",lat:35.8636,lng:139.9680,heading:45},
     {name:"ローソン柏駅南口店",cat:"convenience_store",lat:35.8617,lng:139.9697,heading:0},
     {name:"ローソン柏駅東口店",cat:"convenience_store",lat:35.8623,lng:139.9716,heading:270},
     {name:"柏神社",cat:"temple_shrine",lat:35.8688,lng:139.9768,heading:270},
