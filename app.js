@@ -62,6 +62,24 @@ area_e:{id:"area_e",name:"路上通報・複数コンビニ（松戸駅周辺）
     {name:"ENEOS松戸駅前SS",cat:"gas_station",lat:35.7836,lng:139.9000,heading:0},
     {name:"松戸中央公園",cat:"park",lat:35.78255,lng:139.90312,heading:135}
   ]
+},
+area_f:{id:"area_f",name:"類似団地棟地区（松戸・野菊野）",center:[139.9140,35.7795],
+  mansions:[
+    {id:"F1",name:"野菊野団地1号棟",addr:"千葉県松戸市野菊野 野菊野団地1",lat:35.7800,lng:139.9153,fl:14,units:150,feats:["松戸野菊野郵便局が近い","団地の東端","総合市場前バス停側"],dist:"郵便局近く・東端"},
+    {id:"F2",name:"野菊野団地2号棟",addr:"千葉県松戸市野菊野 野菊野団地2",lat:35.7797,lng:139.9148,fl:14,units:150,feats:["総合市場前バス停が最寄り","松戸南部市場の近く"],dist:"市場側・総合市場前バス停が近い"},
+    {id:"F3",name:"野菊野団地3号棟",addr:"千葉県松戸市野菊野 野菊野団地3",lat:35.7795,lng:139.9144,fl:14,units:150,feats:["団地中央部","集会所の近く"],dist:"団地中央・集会所近く"},
+    {id:"F4",name:"野菊野団地4号棟",addr:"千葉県松戸市野菊野 野菊野団地4",lat:35.7793,lng:139.9140,fl:14,units:150,feats:["野菊野団地バス停ロータリーが目の前","バス停まで137m"],dist:"バス停ロータリーが目の前"},
+    {id:"F5",name:"野菊野団地5号棟",addr:"千葉県松戸市野菊野 野菊野団地5",lat:35.7791,lng:139.9136,fl:14,units:150,feats:["こども館のある6号棟の隣","団地の西端"],dist:"6号棟（こども館）の隣・西端"}
+  ],
+  pois:[
+    {name:"松戸野菊野郵便局",cat:"store",lat:35.7801,lng:139.9155},
+    {name:"野菊野団地バス停",cat:"intersection",lat:35.7792,lng:139.9128},
+    {name:"総合市場前バス停",cat:"intersection",lat:35.7802,lng:139.9162},
+    {name:"松戸南部市場",cat:"store",lat:35.7805,lng:139.9158},
+    {name:"野菊野こども館",cat:"school",lat:35.7789,lng:139.9132},
+    {name:"セブンイレブン松戸胡録台店",cat:"convenience_store",lat:35.7810,lng:139.9115}
+  ],
+  dtree:{q:"何号棟ですか？",options:{"1号棟":{result:"F1",label:"野菊野団地1号棟（郵便局近く・東端）"},"2号棟":{result:"F2",label:"野菊野団地2号棟（市場側）"},"3号棟":{result:"F3",label:"野菊野団地3号棟（団地中央）"},"4号棟":{result:"F4",label:"野菊野団地4号棟（バス停ロータリー前）"},"5号棟":{result:"F5",label:"野菊野団地5号棟（こども館隣・西端）"},"わからない":{q:"近くに何が見えますか？",options:{"郵便局":{result:"F1",label:"1号棟（松戸野菊野郵便局が近い）"},"バス停・ロータリー":{result:"F4",label:"4号棟（バス停ロータリーが目の前）"},"市場・卸売場":{result:"F2",label:"2号棟（松戸南部市場が近い）"},"こども館":{result:"F5",label:"5号棟（こども館のある6号棟の隣）"}}}}}
 }};
 
 /* ═══════════════════ 2. SCENARIO TRANSCRIPTS ═══════════════════ */
@@ -154,6 +172,24 @@ area_e:[
   {s:"D",t:"ローソン松戸駅東口店の前ですね。すぐに救急車を向かわせます。"},
   {s:"C",t:"お願いします！"},
   {s:"S",t:"📍 場所確定: ローソン松戸駅東口店前（松戸市松戸）",a:{type:"confirm_lm"}},
+],
+area_f:[
+  {s:"C",t:"もしもし！野菊野団地で人が倒れています！救急車をお願いします！"},
+  {s:"D",t:"119番消防です。救急ですね。松戸市の野菊野団地でよろしいですか？"},
+  {s:"C",t:"はい、野菊野団地です！"},
+  {s:"D",t:"何号棟ですか？",a:{type:"fly",lat:35.7795,lng:139.9140,z:16}},
+  {s:"C",t:"えっと…3号棟だと思います。"},
+  {s:"S",t:"住所検索: 「野菊野団地」→ 5棟ヒット（1号棟〜5号棟）",a:{type:"markers_t6"}},
+  {s:"S",t:"⚡ T6発火: 同名団地5棟 — 号棟確認支援パネル表示",a:{type:"trigger_t6"}},
+  {s:"D",t:"3号棟ですね。確認させてください。近くにバス停のロータリーは見えますか？"},
+  {s:"C",t:"はい！すぐ下にバスが停まっているロータリーが見えます！"},
+  {s:"S",t:"⚠ 不一致検出: バス停ロータリーは4号棟の目の前（3号棟からは約100m離れている）"},
+  {s:"D",t:"バスのロータリーが目の前に見えるのは4号棟です。建物の入口に号棟の番号は書いてありますか？"},
+  {s:"C",t:"ちょっと待ってください…あ、「4」って書いてあります！4号棟でした、すみません！"},
+  {s:"S",t:"✓ 確認修正: 3号棟 → 4号棟（バス停ロータリー前の棟で確定）",a:{type:"highlight_d",id:"F4"}},
+  {s:"D",t:"野菊野団地4号棟ですね。何階ですか？",a:{type:"sv",lat:35.7793,lng:139.9140,h:0}},
+  {s:"C",t:"7階です。エレベーターの前で倒れています。"},
+  {s:"S",t:"📍 住所確定: 千葉県松戸市野菊野 野菊野団地4号棟 7階エレベーター前",a:{type:"confirm_d",id:"F4"}},
 ]};
 
 /* ═══════════════════ 3. MAP ═══════════════════ */
@@ -370,6 +406,8 @@ function buildIndex(){
   ALL.push({type:"addr",text:DEMO.area_c.building.addr,bname:DEMO.area_c.building.name,lat:DEMO.area_c.building.lat,lng:DEMO.area_c.building.lng,area:"area_c"});
   DEMO.area_c.tenants.forEach(t=>ALL.push({type:"poi",text:t.name,name:t.name,cat:"tenant",lat:DEMO.area_c.building.lat,lng:DEMO.area_c.building.lng,area:"area_c"}));
   DEMO.area_d.mansions.forEach(m=>ALL.push({type:"addr",text:m.addr+" "+m.name,bname:m.name,bt:"mansion",fl:m.fl,lat:m.lat,lng:m.lng,area:"area_d"}));
+  DEMO.area_f.mansions.forEach(m=>ALL.push({type:"addr",text:m.addr+" "+m.name,bname:m.name,bt:"mansion",fl:m.fl,lat:m.lat,lng:m.lng,area:"area_f"}));
+  DEMO.area_f.pois.forEach(p=>ALL.push({type:"poi",text:p.name,name:p.name,cat:p.cat,lat:p.lat,lng:p.lng,area:"area_f"}));
 }
 
 function initSearch(){
@@ -482,12 +520,13 @@ function showT4(){
 
 /* ─── T6 ─── */
 function showT6(){
-  const a=DEMO.area_d,ms=a.mansions;
+  const a=DEMO[curScenario],ms=a.mansions;
   let html=`<div class="ai-sec"><div class="ai-sec-title">候補一覧（クリックで地図移動+SV表示）</div>`;
   ms.forEach((m,i)=>{html+=`<div class="cand" data-lat="${m.lat}" data-lng="${m.lng}"><div><span class="cand-num">${i+1}</span><span class="cand-name">${esc(m.name)}</span></div><div class="cand-type" style="padding-left:32px">${esc(m.addr)}</div><div class="cand-type" style="padding-left:32px">${m.fl}階建て / ${m.units}戸</div><div class="feat-tags">${m.feats.map(f=>`<span class="feat-tag">${esc(f)}</span>`).join("")}</div></div>`});
   html+=`</div>`;
   if(a.dtree){qSet(a.dtree);const q=qGet();if(q)html+=`<div class="ai-sec"><div class="ai-sec-title">確認質問</div><div id="q-ctr">${renderQ(q)}</div></div>`}
-  aiShow("#2c3e50","🏢",`類似名称 ${ms.length}件`,`「ライオンズマンション鎌ケ谷…」`,html);
+  const t6n=ms[0].name.replace(/[0-9０-９]+号棟?$|第[一二三四五六七八九十]+$/,"").trim();
+  aiShow("#2c3e50","🏢",`類似名称 ${ms.length}件`,`「${t6n}…」`,html);
   document.querySelectorAll("#ai-body .cand").forEach(el=>el.addEventListener("click",function(){
     document.querySelectorAll(".cand").forEach(c=>c.classList.remove("sel"));this.classList.add("sel");
     flyTo(+this.dataset.lat,+this.dataset.lng,18);openSV(+this.dataset.lat,+this.dataset.lng);
@@ -602,9 +641,11 @@ function execAction(a){
   else if(t==="trigger_t4"){setAI("ai-busy","AI: 解析中");clearM();addM(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,{cls:"search-m",label:"🔍",title:DEMO.area_c.ext.name});flyTo(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,18);setTimeout(()=>showT4(),400)}
   else if(t==="markers_t6"){
     clearM();
-    DEMO.area_d.mansions.forEach((m,i)=>{addM(m.lat,m.lng,{cls:"cand-m",label:String(i+1),title:m.name})});
-    fitB(DEMO.area_d.mansions.map(m=>({lat:m.lat,lng:m.lng})),80);
-    showAerial(35.7700,140.0010,16);
+    const ms=DEMO[curScenario].mansions;
+    ms.forEach((m,i)=>{addM(m.lat,m.lng,{cls:"cand-m",label:String(i+1),title:m.name})});
+    fitB(ms.map(m=>({lat:m.lat,lng:m.lng})),80);
+    const c=DEMO[curScenario].center;
+    showAerial(c[1],c[0],16);
   }
   else if(t==="trigger_t6"){setAI("ai-busy","AI: 解析中");setTimeout(()=>showT6(),400)}
   else if(t==="sv") openSV(a.lat,a.lng,a.h||0);
@@ -636,7 +677,7 @@ function execAction(a){
     addM(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,{cls:"ok-m",label:"✓",title:"確認一致"});flyTo(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,19);
   }
   else if(t==="highlight_d"){
-    const m=DEMO.area_d.mansions.find(x=>x.id===a.id);
+    const m=(DEMO[curScenario].mansions||[]).find(x=>x.id===a.id);
     if(m){addM(m.lat,m.lng,{cls:"ok-m",label:"✓",title:"特定: "+m.name});flyTo(m.lat,m.lng,19);openSV(m.lat,m.lng)}
   }
   else if(t==="sv_gallery") showSVGallery(a.cat);
