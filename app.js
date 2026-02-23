@@ -57,15 +57,14 @@ area_d:{id:"area_d",name:"類似マンション地区（鎌ケ谷）",center:[14
 area_e:{id:"area_e",name:"路上通報・複数コンビニ（松戸駅周辺）",center:[139.9008,35.7840],
   gps:{lat:35.7835,lng:139.9010,acc:250},
   landmarks:[
-    {name:"松戸駅前交差点",cat:"intersection",lat:35.7840,lng:139.9012,heading:0},
-    {name:"岩瀬交差点",cat:"intersection",lat:35.7822,lng:139.9040,heading:90},
-    {name:"セブン-イレブン松戸駅前店",cat:"convenience_store",lat:35.7835,lng:139.8993,heading:60},
-    {name:"ファミリーマート松戸駅西口店",cat:"convenience_store",lat:35.7841,lng:139.8999,heading:350},
-    {name:"ローソン松戸駅東口店",cat:"convenience_store",lat:35.7838,lng:139.9014,heading:270},
+    {name:"松戸駅前交差点",cat:"intersection",lat:35.7847,lng:139.9004,heading:0},
+    {name:"岩瀬交差点",cat:"intersection",lat:35.7826,lng:139.9025,heading:90},
+    {name:"ファミリーマート松戸駅前店",cat:"convenience_store",lat:35.78439163,lng:139.9012194,heading:0},
+    {name:"ローソン松戸駅東口店",cat:"convenience_store",lat:35.78546098,lng:139.903454,heading:270},
     {name:"ミニストップ松戸駅前店",cat:"convenience_store",lat:35.7857,lng:139.9024,heading:200},
-    {name:"松戸駅前郵便局",cat:"store",lat:35.7828,lng:139.9015,heading:270},
-    {name:"ENEOS松戸駅前SS",cat:"gas_station",lat:35.7813,lng:139.8995,heading:0},
-    {name:"松戸中央公園",cat:"park",lat:35.7845,lng:139.8988,heading:135}
+    {name:"松戸東口郵便局",cat:"store",lat:35.7856,lng:139.9026,heading:270},
+    {name:"ENEOS松戸駅前SS",cat:"gas_station",lat:35.7836,lng:139.9000,heading:0},
+    {name:"松戸中央公園",cat:"park",lat:35.78255,lng:139.90312,heading:135}
   ]
 }};
 
@@ -470,9 +469,9 @@ function showT3(){
   if(!a||!a.landmarks||!a.gps)return;
   const g=a.gps;
   const lms=a.landmarks.map(l=>({...l,d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})).sort((x,y)=>x.d-y.d);
-  lms.forEach(l=>addM(l.lat,l.lng,{cls:"lm-m",label:catI(l.cat),title:l.name+" ("+l.d+"m)",click:()=>{flyTo(l.lat,l.lng,18);openSV(l.lat,l.lng,l.heading||0)}}));
+  lms.forEach((l,i)=>addM(l.lat,l.lng,{cls:"lm-m lm-numbered",label:catI(l.cat)+'<span class="lm-num">'+(i+1)+'</span>',title:(i+1)+". "+l.name+" ("+l.d+"m)",click:()=>{flyTo(l.lat,l.lng,18);openSV(l.lat,l.lng,l.heading||0)}}));
   let html=`<div class="ai-sec"><div class="ai-sec-title">周辺の目印（距離順・クリックでSV表示）</div>`;
-  lms.slice(0,10).forEach(l=>{html+=`<div class="lm-item" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}"><span class="lm-icon">${catI(l.cat)}</span><span class="lm-name">${esc(l.name)}</span><span class="lm-dist">${l.d}m</span></div>`});
+  lms.slice(0,10).forEach((l,i)=>{html+=`<div class="lm-item" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}"><span class="lm-num-badge">${i+1}</span><span class="lm-icon">${catI(l.cat)}</span><span class="lm-name">${esc(l.name)}</span><span class="lm-dist">${l.d}m</span></div>`});
   html+=`</div>`;
   const cvs=lms.filter(l=>l.cat==="convenience_store").length;
   const ixs=lms.filter(l=>l.cat==="intersection").length;
