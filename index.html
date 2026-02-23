@@ -48,12 +48,10 @@
     <div id="aerial-map" class="panel-body"></div>
   </div>
 
-  <!-- StreetView Indicator (popup controller) -->
-  <div id="sv-indicator" class="hidden">
-    <div class="svi-label">📷 Street View</div>
-    <div id="svi-addr" class="svi-addr"></div>
-    <button id="svi-open" class="svi-btn">再表示</button>
-    <button class="svi-close" onclick="closeSV()">&times;</button>
+  <!-- StreetView Embed Panel -->
+  <div id="sv-panel" class="panel hidden">
+    <div class="panel-hd"><span>📷 Street View</span><span id="sv-addr" class="sv-addr-label"></span><button class="panel-x" onclick="closeSV()">&times;</button></div>
+    <div class="sv-panel-body"><iframe id="sv-iframe" src="" allowfullscreen loading="lazy" referrerpolicy="no-referrer"></iframe></div>
   </div>
 
   <!-- AI Dialog -->

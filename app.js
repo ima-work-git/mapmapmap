@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    119番 住所特定AI支援 地図システム — app.js (GitHub Pages)
-   会話文字起こし連動 + Google Street View popup
+   会話文字起こし連動 + Google Street View embed
    ═══════════════════════════════════════════════════════════════ */
 (function(){
 "use strict";
@@ -259,20 +259,16 @@ function searchNearby(lat,lng){
   items.slice(0,8).forEach(it=>{addM(it.lat,it.lng,{cls:"poi-m",label:catI(it.cat),title:it.name+" ("+it.d+"m)"})});
 }
 
-/* ═══════════════════ 4. STREET VIEW POPUP ═══════════════════ */
-let svWin=null;
+/* ═══════════════════ 4. STREET VIEW EMBED ═══════════════════ */
 function openSV(lat,lng,heading){
   const h=heading||0;
-  const url=`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}&heading=${h}&pitch=0&fov=90`;
-  if(svWin&&!svWin.closed){svWin.location.href=url}
-  else{svWin=window.open(url,"sv119","width=640,height=480,toolbar=no,menubar=no,location=no,status=no,scrollbars=no,resizable=yes")}
-  // Show indicator
-  const ind=document.getElementById("sv-indicator");
-  ind.classList.remove("hidden");
-  document.getElementById("svi-addr").textContent=lat.toFixed(4)+", "+lng.toFixed(4);
-  document.getElementById("svi-open").onclick=()=>openSV(lat,lng,heading);
+  const iframe=document.getElementById("sv-iframe");
+  iframe.src=svEmbedUrl(lat,lng,h);
+  const panel=document.getElementById("sv-panel");
+  panel.classList.remove("hidden");
+  document.getElementById("sv-addr").textContent=lat.toFixed(4)+", "+lng.toFixed(4);
 }
-window.closeSV=function(){document.getElementById("sv-indicator").classList.add("hidden");if(svWin&&!svWin.closed)svWin.close();svWin=null};
+window.closeSV=function(){document.getElementById("sv-panel").classList.add("hidden");document.getElementById("sv-iframe").src=""};
 window.openSV=openSV;
 
 /* ═══════════════════ 4b. SV GALLERY (multiple candidates) ═══════════════════ */
@@ -280,7 +276,7 @@ const catNames={intersection:"交差点",convenience_store:"コンビニ",gas_st
 let galMarkers=[];
 
 function svEmbedUrl(lat,lng,heading){
-  return`https://maps.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=12,${heading||0},0,0,0&output=svembed`;
+  return`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyB7--VFS8Fz9_vsnHbiB17JCjJEjGeeq0E&location=${lat},${lng}&heading=${heading||0}&pitch=0&fov=90`;
 }
 
 function clearGalMarkers(){galMarkers.forEach(m=>m.remove());galMarkers=[]}
@@ -319,7 +315,7 @@ function showSVGallery(cat){
       <span class="svg-icon">${catI(l.cat)}</span>
       <span class="svg-name">${esc(l.name)}</span>
       <span class="svg-dist">${l.d}m</span>
-      <button class="svg-popup-btn" title="別ウィンドウで拡大表示">⛶</button>
+      <button class="svg-popup-btn" title="パネルで拡大表示">⛶</button>
     </div>
     <div class="svg-frame-wrap">
       <iframe class="svg-frame" src="${svEmbedUrl(l.lat,l.lng,l.heading)}" allowfullscreen loading="lazy" referrerpolicy="no-referrer"></iframe>
