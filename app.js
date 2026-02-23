@@ -24,27 +24,23 @@ area_a:{id:"area_a",name:"同一番地密集地区（松戸駅付近）",center:
     {id:"A5",np:"渡辺",type:"detached",fl:2,lat:35.78345,lng:139.90145,eb:180,addr:"千葉県松戸市松戸1234番地",feat:{pos:"突き当たり（行き止まり）",r:"(壁)",l:"高橋",ac:"(空き地)",bk:"加藤"}}
   ],
   pois:[{name:"セブンイレブン松戸駅前店",cat:"convenience_store",lat:35.78390,lng:139.90090},{name:"松戸中央公園",cat:"park",lat:35.78360,lng:139.90090}],
-  dtree:{q:"角の家ですか？",yes:{result:"A1",label:"❶ 鈴木宅"},no:{q:"突き当たりの家ですか？",yes:{result:"A5",label:"❺ 渡辺宅"},no:{q:"向かいに公園は見えますか？",yes:{q:"3階建てですか？",yes:{result:"A4",label:"❹ 高橋宅"},no:{result:"A3",label:"❸ 佐藤宅"}},no:{result:"A2",label:"❷ 山田宅"}}}}
+  dtree:{q:"お宅の向かいには何がありますか？",options:{"コンビニ":{result:"A1",label:"❶ 鈴木宅（角地・向かいにセブンイレブン）"},"駐車場":{result:"A2",label:"❷ 山田宅（向かいに月極駐車場）"},"公園":{q:"お宅は3階建てですか？",options:{"はい":{result:"A4",label:"❹ 高橋宅（3階建てアパート）"},"いいえ":{result:"A3",label:"❸ 佐藤宅（公園の隣の戸建て）"}}},"空き地":{result:"A5",label:"❺ 渡辺宅（突き当たり・向かいに空き地）"}}}
 },
-area_b:{id:"area_b",name:"路上通報想定地区（柏駅付近）",center:[139.9757,35.8681],
-  gps:{lat:35.8680,lng:139.9755,acc:150},
+area_b:{id:"area_b",name:"路上通報想定地区（柏駅付近）",center:[139.9740,35.8650],
+  gps:{lat:35.8668,lng:139.9765,acc:150},
   landmarks:[
-    {name:"柏駅前交差点",cat:"intersection",lat:35.8685,lng:139.9762,heading:45},
-    {name:"柏駅南口交差点",cat:"intersection",lat:35.8672,lng:139.9748,heading:180},
-    {name:"ファミリーマート柏駅東口店",cat:"convenience_store",lat:35.8678,lng:139.9758,heading:270},
-    {name:"セブンイレブン柏中央店",cat:"convenience_store",lat:35.8683,lng:139.9745,heading:90},
-    {name:"ローソン柏駅南口店",cat:"convenience_store",lat:35.8670,lng:139.9760,heading:0},
-    {name:"ENEOS 柏中央SS",cat:"gas_station",lat:35.8675,lng:139.9750,heading:180},
-    {name:"柏市立柏第一小学校",cat:"school",lat:35.8690,lng:139.9745,heading:0},
+    {name:"旧水戸街道入口",cat:"intersection",lat:35.8673,lng:139.9781,heading:220},
+    {name:"柏駅入口",cat:"intersection",lat:35.8636,lng:139.9680,heading:45},
+    {name:"ローソン柏駅南口店",cat:"convenience_store",lat:35.8617,lng:139.9697,heading:0},
+    {name:"ローソン柏駅東口店",cat:"convenience_store",lat:35.8623,lng:139.9716,heading:270},
     {name:"柏神社",cat:"temple_shrine",lat:35.8688,lng:139.9768,heading:270},
-    {name:"マツモトキヨシ柏駅前店",cat:"store",lat:35.8680,lng:139.9770,heading:90},
-    {name:"タイムズ柏駅前駐車場",cat:"parking",lat:35.8676,lng:139.9742,heading:0}
+    {name:"マツモトキヨシ柏駅前店",cat:"store",lat:35.8630,lng:139.9720,heading:90}
   ]
 },
-area_c:{id:"area_c",name:"テナント変更地区（流山おおたかの森）",center:[139.9290,35.8717],
-  building:{name:"大成ビル",addr:"千葉県流山市おおたかの森北1-2-3",reg:"2019年",lat:35.8717,lng:139.9290},
-  ext:{name:"ABCコンサルティング",addr:"千葉県流山市おおたかの森北1-2-3 大成ビル3F",lat:35.8717,lng:139.9290},
-  tenants:[{fl:1,name:"スターバックス おおたかの森店"},{fl:2,name:"ABC英会話スクール"},{fl:3,name:"ABCコンサルティング"},{fl:4,name:"流山税理士事務所"}]
+area_c:{id:"area_c",name:"テナント変更地区（松戸駅西口）",center:[139.90017,35.78494],
+  building:{name:"新角ビル",addr:"千葉県松戸市本町20-1",reg:"1973年",lat:35.78494,lng:139.90017},
+  ext:{name:"Girls Bar Chelsea",addr:"千葉県松戸市本町20-1 新角ビル5F-B",lat:35.78494,lng:139.90017},
+  tenants:[{fl:"B1",name:"Girls Bar Betty"},{fl:1,name:"テナント"},{fl:2,name:"えちご（居酒屋）"},{fl:5,name:"Girls Bar Chelsea"},{fl:7,name:"Malae（リラクゼーション）"},{fl:8,name:"テミス"},{fl:9,name:"UP STAIRS"}]
 },
 area_d:{id:"area_d",name:"類似マンション地区（鎌ケ谷）",center:[140.0010,35.7700],
   mansions:[
@@ -82,52 +78,45 @@ area_a:[
   {s:"S",t:"⚡ T1発火: 同番地に5軒あります — AI支援パネル表示",a:{type:"trigger_t1"}},
   {s:"D",t:"1234番地にお宅が何軒かあるようです。山田さんのお宅でよろしいですか？"},
   {s:"C",t:"はい、山田です。"},
-  {s:"D",t:"角の家ですか？"},
-  {s:"C",t:"いいえ、角ではないです。",a:{type:"q_answer",ans:"いいえ"}},
-  {s:"D",t:"突き当たりのお宅ですか？"},
-  {s:"C",t:"いいえ、違います。",a:{type:"q_answer",ans:"いいえ"}},
-  {s:"D",t:"お向かいに公園は見えますか？"},
-  {s:"C",t:"いいえ、公園は見えません。向かいは駐車場です。",a:{type:"q_answer",ans:"いいえ"}},
-  {s:"S",t:"✓ 特定完了: ❷ 山田宅（並びの2軒目・向かいに月極駐車場）",a:{type:"highlight",id:"A2"}},
-  {s:"D",t:"山田さん宅、向かいが駐車場のお宅ですね。すぐに救急車を向かわせます。"},
+  {s:"D",t:"山田さんのお宅ですね。お向かいには何がありますか？"},
+  {s:"C",t:"向かいは…月極駐車場です。",a:{type:"q_answer",ans:"駐車場"}},
+  {s:"S",t:"✓ 特定完了: ❷ 山田宅（向かいに月極駐車場 — 他4軒にない特徴で確定）",a:{type:"highlight",id:"A2"}},
+  {s:"D",t:"向かいが月極駐車場の山田さん宅ですね。すぐに救急車を向かわせます。"},
   {s:"C",t:"お願いします！"},
   {s:"S",t:"📍 住所確定: 千葉県松戸市松戸1234番地 山田宅",a:{type:"confirm",id:"A2"}},
 ],
 area_b:[
-  {s:"S",t:"📡 入電GPS: 35.8680, 139.9755（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.8680,lng:139.9755,acc:300}},
+  {s:"S",t:"📡 入電GPS: 35.8668, 139.9765（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.8668,lng:139.9765,acc:300}},
   {s:"C",t:"あの、事故です！車と自転車がぶつかって…！"},
   {s:"D",t:"119番消防です。おケガされた方はいますか？"},
-  {s:"C",t:"はい、自転車の人が倒れてます！場所は柏駅の近くですが、住所がわかりません…"},
+  {s:"C",t:"はい、自転車の人が倒れてます！場所がわかりません…交差点の近くです"},
   {s:"S",t:"📡 GPS更新: 精度向上 ±150m",a:{type:"gps_update",acc:150}},
   {s:"S",t:"⚡ T3発火: 路上通報 — 周辺ランドマーク表示",a:{type:"trigger_t3"}},
-  {s:"D",t:"GPS情報が入りました。大きい道路沿いですか？交差点の近くですか？"},
-  {s:"C",t:"はい！大きい道路で、信号のある交差点のすぐそばです！",a:{type:"sv_gallery",cat:"intersection"}},
-  {s:"S",t:"🚦 交差点候補: 2件 — 右パネルにストリートビュー表示"},
-  {s:"D",t:"近くにコンビニやお店は見えますか？"},
-  {s:"C",t:"コンビニが見えます！",a:{type:"sv_gallery",cat:"convenience_store"}},
-  {s:"S",t:"🏪 コンビニ候補: 3件 — 距離順にストリートビュー表示中"},
-  {s:"D",t:"何のコンビニですか？ファミリーマート？セブンイレブン？ローソン？"},
-  {s:"C",t:"ファミリーマートです！ファミマのすぐ前です！",a:{type:"sv_gallery_narrow",name:"ファミリーマート柏駅東口店"}},
-  {s:"S",t:"✓ 場所特定: ファミリーマート柏駅東口店 付近",a:{type:"highlight_lm",name:"ファミリーマート柏駅東口店"}},
-  {s:"D",t:"ファミリーマート柏駅東口店の前ですね。すぐに救急車を向かわせます。"},
+  {s:"D",t:"交差点の近くですね。信号はありますか？"},
+  {s:"C",t:"はい！信号のある交差点です！",a:{type:"sv_gallery",cat:"intersection"}},
+  {s:"S",t:"🚦 交差点候補: 2件 — 誤差円内の信号にストリートビュー表示"},
+  {s:"D",t:"信号機の柱に、交差点の名前が青い看板で出ていませんか？読めますか？"},
+  {s:"C",t:"えっと…「旧水戸街道入口」って書いてあります！",a:{type:"sv_gallery_narrow",name:"旧水戸街道入口"}},
+  {s:"S",t:"✓ 場所特定: 旧水戸街道入口 交差点",a:{type:"highlight_lm",name:"旧水戸街道入口"}},
+  {s:"D",t:"旧水戸街道入口の交差点ですね。柏市柏ですね。すぐに救急車を向かわせます。"},
   {s:"C",t:"お願いします！急いでください！"},
-  {s:"S",t:"📍 場所確定: ファミリーマート柏駅東口店前（柏市柏）",a:{type:"confirm_lm"}},
+  {s:"S",t:"📍 場所確定: 旧水戸街道入口交差点（柏市柏）",a:{type:"confirm_lm"}},
 ],
 area_c:[
-  {s:"C",t:"あの、会社の人が急に倒れて…救急車をお願いします！"},
+  {s:"C",t:"あの、お客さんが急に倒れて…救急車をお願いします！"},
   {s:"D",t:"119番消防です。場所はどちらですか？"},
-  {s:"C",t:"ABCコンサルティングです。オフィスの中です。"},
-  {s:"D",t:"ABCコンサルティング…確認します。",a:{type:"fly",lat:35.8717,lng:139.9290,z:17}},
-  {s:"S",t:"住所検索: 「ABCコンサルティング」→ 消防DBヒットなし",a:{type:"no_hit"}},
+  {s:"C",t:"チェルシーです。松戸駅の近くのお店なんですけど…"},
+  {s:"D",t:"チェルシー…確認します。",a:{type:"fly",lat:35.78494,lng:139.90017,z:17}},
+  {s:"S",t:"住所検索: 「チェルシー」「Girls Bar Chelsea」→ 消防DBヒットなし",a:{type:"no_hit"}},
   {s:"S",t:"⚡ T4発火: DB該当なし — 外部検索実行",a:{type:"trigger_t4"}},
-  {s:"D",t:"大成ビルの3階にあるABCコンサルティングさんでしょうか？"},
-  {s:"C",t:"はい、そうです！大成ビルです。"},
-  {s:"D",t:"1階にスターバックスが入っているビルですか？",a:{type:"sv",lat:35.8717,lng:139.9290,h:0}},
-  {s:"C",t:"はい！1階がスタバのビルです！"},
-  {s:"S",t:"✓ 確認一致: 大成ビル3F ABCコンサルティング",a:{type:"highlight_c"}},
-  {s:"D",t:"流山市おおたかの森北1-2-3、大成ビル3階ですね。何階で待っていればいいですか？"},
-  {s:"C",t:"3階のオフィスにいます。エレベーターがあります。"},
-  {s:"S",t:"📍 住所確定: 千葉県流山市おおたかの森北1-2-3 大成ビル3F",a:{type:"confirm_c"}},
+  {s:"D",t:"松戸駅西口の新角ビル5階にあるお店でしょうか？"},
+  {s:"C",t:"はい、そうです！新角ビルです。"},
+  {s:"D",t:"松戸駅の目の前の9階建てのビルですか？",a:{type:"sv",lat:35.78494,lng:139.90017,h:0}},
+  {s:"C",t:"はい！駅出てすぐのビルです！"},
+  {s:"S",t:"✓ 確認一致: 新角ビル5F-B Girls Bar Chelsea",a:{type:"highlight_c"}},
+  {s:"D",t:"松戸市本町20-1、新角ビル5階ですね。何階で待っていればいいですか？"},
+  {s:"C",t:"5階です。エレベーターで上がってきてください。"},
+  {s:"S",t:"📍 住所確定: 千葉県松戸市本町20-1 新角ビル5F-B",a:{type:"confirm_c"}},
 ],
 area_d:[
   {s:"C",t:"マンションの廊下で人が倒れています！救急車を！"},
@@ -487,8 +476,8 @@ function showT3(){
 function showT4(){
   const a=DEMO.area_c,ext=a.ext;
   let html=`<div class="ai-sec"><div class="ai-sec-title">検索結果</div><div class="poi-r"><div class="poi-r-name">${esc(ext.name)}<span class="ext-badge">外部検索</span></div><div class="poi-r-addr">📍 ${esc(ext.addr)}</div><div style="font-size:11px;color:#7f8c8d;margin-top:4px">消防DB: ${esc(a.building.name)} (${a.building.reg})</div><div class="poi-r-acts"><button class="poi-btn" onclick="openSV(${ext.lat},${ext.lng})">📷 ストリートビュー確認</button></div></div></div>`;
-  html+=`<div class="ai-sec"><div class="ai-sec-title">同じビルの情報</div><div class="tenant-list">${a.tenants.map(t=>`<div class="tenant-row${t.name.includes("ABCコンサル")?" hl":""}"><span class="tenant-fl">${t.fl}F:</span><span class="tenant-nm">${esc(t.name)}</span></div>`).join("")}</div></div>`;
-  aiShow("#8e44ad","🔍","DB該当なし — 外部検索",`「ABCコンサルティング」`,html);
+  html+=`<div class="ai-sec"><div class="ai-sec-title">同じビルの情報</div><div class="tenant-list">${a.tenants.map(t=>`<div class="tenant-row${t.name.includes("Chelsea")?" hl":""}"><span class="tenant-fl">${t.fl}F:</span><span class="tenant-nm">${esc(t.name)}</span></div>`).join("")}</div></div>`;
+  aiShow("#8e44ad","🔍","DB該当なし — 外部検索",`「${esc(ext.name)}」`,html);
 }
 
 /* ─── T6 ─── */
