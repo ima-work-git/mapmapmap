@@ -22,24 +22,56 @@
     </div>
   </header>
 
-  <!-- Search Bar -->
-  <div id="search-wrap">
-    <div id="search-box">
-      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg>
-      <input id="search-input" type="text" placeholder="住所・建物名・表札名を入力..." autocomplete="off">
-      <button id="search-clear" class="hidden">&times;</button>
+  <!-- Main 2-column layout -->
+  <div id="main-layout">
+    <!-- Map Area (left) -->
+    <div id="map-area">
+      <div id="search-wrap">
+        <div id="search-box">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg>
+          <input id="search-input" type="text" placeholder="住所・建物名・表札名を入力..." autocomplete="off">
+          <button id="search-clear" class="hidden">&times;</button>
+        </div>
+        <div id="search-results" class="hidden"></div>
+      </div>
+      <div id="map"></div>
+      <div id="layer-toggle">
+        <button class="layer-btn active" data-layer="osm">地図</button>
+        <button class="layer-btn" data-layer="aerial">航空写真</button>
+        <button class="layer-btn" data-layer="hybrid">地図+写真</button>
+      </div>
     </div>
-    <div id="search-results" class="hidden"></div>
-  </div>
 
-  <!-- Map -->
-  <div id="map"></div>
-
-  <!-- Layer Toggle -->
-  <div id="layer-toggle">
-    <button class="layer-btn active" data-layer="osm">地図</button>
-    <button class="layer-btn" data-layer="aerial">航空写真</button>
-    <button class="layer-btn" data-layer="hybrid">地図+写真</button>
+    <!-- Right Panel: Transcript + Controls -->
+    <div id="right-panel">
+      <div id="rp-header">
+        <div id="rp-scenario-row">
+          <label>シナリオ</label>
+          <select id="demo-scenario">
+            <option value="area_a">A: 同一番地密集（松戸）</option>
+            <option value="area_b">B: 路上通報（柏）</option>
+            <option value="area_c">C: テナント変更（松戸）</option>
+            <option value="area_d">D: 類似マンション（鎌ケ谷）</option>
+            <option value="area_e">E: 複数コンビニ（松戸）</option>
+            <option value="area_f">F: 類似団地棟（松戸・野菊野）</option>
+            <option value="area_g">G: 複合対応（北松戸・GPS+ビル+テナント）</option>
+          </select>
+        </div>
+        <div id="rp-btn-row">
+          <button id="btn-start" class="dbtn red">開始</button>
+          <button id="btn-reset" class="dbtn gray hidden">リセット</button>
+        </div>
+      </div>
+      <div id="transcript-area">
+        <div id="transcript-lines">
+          <div class="tl-placeholder">シナリオを選択して「開始」をクリック</div>
+        </div>
+      </div>
+      <div id="rp-footer">
+        <button id="btn-next" class="dbtn-next" disabled>次へ →</button>
+        <div id="step-counter" class="step-counter"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Aerial Panel -->
@@ -50,11 +82,11 @@
 
   <!-- StreetView Embed Panel -->
   <div id="sv-panel" class="panel hidden">
-    <div class="panel-hd"><span>📷 Street View</span><span id="sv-addr" class="sv-addr-label"></span><button class="panel-x" onclick="closeSV()">&times;</button></div>
+    <div class="panel-hd"><span>Street View</span><span id="sv-addr" class="sv-addr-label"></span><button class="panel-x" onclick="closeSV()">&times;</button></div>
     <div class="sv-panel-body"><iframe id="sv-iframe" src="" allowfullscreen loading="lazy"></iframe></div>
   </div>
 
-  <!-- AI Dialog -->
+  <!-- AI Dialog (now on left side over map) -->
   <div id="ai-dialog" class="hidden">
     <div class="ai-hd">
       <div class="ai-hd-left"><span class="ai-icon">AI</span><span id="ai-title">AI支援</span></div>
@@ -64,10 +96,10 @@
     <div id="ai-body"></div>
   </div>
 
-  <!-- SV Gallery Panel (multiple Street View candidates) -->
+  <!-- SV Gallery Panel (now on left side over map) -->
   <div id="sv-gallery" class="hidden">
     <div class="svg-hd">
-      <span class="svg-title">📷 候補ストリートビュー</span>
+      <span class="svg-title">候補ストリートビュー</span>
       <span class="svg-count">0件</span>
       <button class="panel-x" onclick="hideSVGallery()">&times;</button>
     </div>
@@ -76,38 +108,11 @@
 
   <!-- Context Menu -->
   <div id="ctx-menu" class="hidden">
-    <div class="ctx-item" data-action="sv">📷 この地点のストリートビューを表示</div>
-    <div class="ctx-item" data-action="nearby">🔍 この地点を中心に周辺検索</div>
-    <div class="ctx-item" data-action="reverse">📍 この地点の住所を取得</div>
-    <div class="ctx-item" data-action="aerial">🛰 航空写真で確認</div>
+    <div class="ctx-item" data-action="sv">この地点のストリートビューを表示</div>
+    <div class="ctx-item" data-action="nearby">この地点を中心に周辺検索</div>
+    <div class="ctx-item" data-action="reverse">この地点の住所を取得</div>
+    <div class="ctx-item" data-action="aerial">航空写真で確認</div>
   </div>
-
-  <!-- Transcript / Demo Panel -->
-  <footer id="transcript-bar">
-    <div class="tb-controls">
-      <label>シナリオ</label>
-      <select id="demo-scenario">
-        <option value="area_a">A: 同一番地密集（松戸）</option>
-        <option value="area_b">B: 路上通報（柏）</option>
-        <option value="area_c">C: テナント変更（松戸）</option>
-        <option value="area_d">D: 類似マンション（鎌ケ谷）</option>
-        <option value="area_e">E: 複数コンビニ（松戸）</option>
-        <option value="area_f">F: 類似団地棟（松戸・野菊野）</option>
-        <option value="area_g">G: 複合対応（北松戸・GPS+ビル+テナント）</option>
-      </select>
-      <button id="btn-start" class="dbtn red">開始</button>
-      <button id="btn-reset" class="dbtn gray hidden">リセット</button>
-    </div>
-    <div id="transcript-area">
-      <div id="transcript-lines">
-        <div class="tl-placeholder">← シナリオを選択して「開始」をクリック</div>
-      </div>
-    </div>
-    <div class="tb-advance">
-      <button id="btn-next" class="dbtn-next" disabled>次へ →</button>
-      <div id="step-counter" class="step-counter"></div>
-    </div>
-  </footer>
 
   <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
   <script src="app.js"></script>
