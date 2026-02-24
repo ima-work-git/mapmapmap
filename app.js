@@ -227,16 +227,14 @@ area_g:[
   {s:"D",t:"119番消防です。救急ですね。場所はどちらですか？"},
   {s:"C",t:"北松戸の駅の近くのビルです…住所がわかりません…"},
   {s:"S",t:"📡 GPS更新: 精度向上 ±100m",a:{type:"gps_update",acc:100}},
-  /* Phase 2: ランドマーク確認 */
-  {s:"D",t:"北松戸駅の近くですね。確認します。",a:{type:"fly",lat:35.7940,lng:139.9042,z:17}},
-  {s:"S",t:"⚡ T3発火: GPS通報 — 周辺ランドマーク表示",a:{type:"trigger_t3"}},
-  {s:"D",t:"周りに何が見えますか？コンビニや交差点はありますか？"},
-  {s:"C",t:"1階にセブンイレブンが入っているビルです！交差点の角にあります！"},
-  /* Phase 3: 類似ビル特定 */
-  {s:"S",t:"住所検索: 「北松戸駅前 ビル」→ 3棟ヒット（北松戸ビル・第2ビル・第3ビル）",a:{type:"markers_t6"}},
+  /* Phase 2: DB検索 → T6（類似ビル特定） */
+  {s:"S",t:"住所検索: 「北松戸駅 ビル」→ 消防DB 3棟ヒット（北松戸ビル・第2ビル・第3ビル）",a:{type:"markers_t6"}},
   {s:"S",t:"⚡ T6発火: 駅前に類似ビル3棟 — 特定支援パネル表示",a:{type:"trigger_t6"}},
   {s:"D",t:"北松戸駅前にビルが3棟あります。ビルの名前はわかりますか？"},
   {s:"C",t:"いえ、わかりません…",a:{type:"q_answer_d",ans:"わからない"}},
+  /* Phase 3: 目標物確認 → ランドマークマーカー補助（T6決定木は維持） */
+  {s:"D",t:"周りに目立つものはありますか？コンビニや交差点など…",a:{type:"markers_t3"}},
+  {s:"C",t:"1階にセブンイレブンが入っているビルです！交差点の角にあります！"},
   {s:"D",t:"建物は何階建てですか？"},
   {s:"C",t:"高いです…9階か10階くらいあると思います",a:{type:"q_answer_d",ans:"9階以上"}},
   {s:"S",t:"✓ 特定完了: 北松戸第3ビル（9階建て・交差点角・1階セブンイレブン）",a:{type:"highlight_d",id:"G3"}},
@@ -919,6 +917,10 @@ function execAction(a){
   }
   else if(t==="trigger_t1"){setAI("ai-busy","AI: 解析中");setTimeout(()=>showT1(),400)}
   else if(t==="trigger_t3"){setAI("ai-busy","AI: 解析中");setTimeout(()=>showT3(),400)}
+  else if(t==="markers_t3"){
+    /* ランドマークマーカーのみ追加（AI情報パネルは上書きしない） */
+    const d3=DEMO[curScenario];if(d3&&d3.landmarks&&d3.gps){const g3=d3.gps;d3.landmarks.map(l=>Object.assign({},l,{d:Math.round(hav(g3.lat,g3.lng,l.lat,l.lng))})).sort((x,y)=>x.d-y.d).forEach((l,i)=>{addM(l.lat,l.lng,{cls:"lm-m lm-numbered",label:catI(l.cat)+'<span class="lm-num">'+(i+1)+'</span>',title:(i+1)+". "+l.name+" ("+l.d+"m)"})})}
+  }
   else if(t==="no_hit"){}/* visual only, text in transcript */
   else if(t==="trigger_t4"){setAI("ai-busy","AI: 解析中");clearM();addM(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,{cls:"search-m",label:"🔍",title:DEMO.area_c.ext.name});flyTo(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,18);setTimeout(()=>showT4(),400)}
   else if(t==="markers_t6"){
