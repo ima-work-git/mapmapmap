@@ -67,6 +67,14 @@
           <div class="tl-placeholder">シナリオを選択して「開始」をクリック</div>
         </div>
       </div>
+      <div id="ai-area" class="hidden">
+        <div class="ai-hd">
+          <div class="ai-hd-left"><span class="ai-icon">AI</span><span id="ai-title">AI支援</span></div>
+          <button id="ai-close" class="panel-x">&times;</button>
+        </div>
+        <div id="ai-subtitle" class="ai-sub"></div>
+        <div id="ai-body"></div>
+      </div>
       <div id="info-area">
         <div id="info-bar">
           <span id="info-icon"></span>
@@ -90,31 +98,6 @@
     <div id="aerial-map" class="panel-body"></div>
   </div>
 
-  <!-- StreetView Embed Panel -->
-  <div id="sv-panel" class="panel hidden">
-    <div class="panel-hd"><span>Street View</span><span id="sv-addr" class="sv-addr-label"></span><button class="panel-x" onclick="closeSV()">&times;</button></div>
-    <div class="sv-panel-body"><iframe id="sv-iframe" src="" allowfullscreen loading="lazy"></iframe></div>
-  </div>
-
-  <!-- AI Dialog (now on left side over map) -->
-  <div id="ai-dialog" class="hidden">
-    <div class="ai-hd">
-      <div class="ai-hd-left"><span class="ai-icon">AI</span><span id="ai-title">AI支援</span></div>
-      <button id="ai-close" class="panel-x">&times;</button>
-    </div>
-    <div id="ai-subtitle" class="ai-sub"></div>
-    <div id="ai-body"></div>
-  </div>
-
-  <!-- SV Gallery Panel (now on left side over map) -->
-  <div id="sv-gallery" class="hidden">
-    <div class="svg-hd">
-      <span class="svg-title">候補ストリートビュー</span>
-      <span class="svg-count">0件</span>
-      <button class="panel-x" onclick="hideSVGallery()">&times;</button>
-    </div>
-    <div id="svg-body"></div>
-  </div>
 
   <!-- Keyword Action Menu -->
   <div id="kw-menu" class="hidden">

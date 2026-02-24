@@ -552,18 +552,15 @@ function searchNearby(lat,lng){
 /* ═══════════════════ 4. STREET VIEW EMBED ═══════════════════ */
 function openSV(lat,lng,heading){
   const h=heading||0;
-  const iframe=document.getElementById("sv-iframe");
-  iframe.src=svEmbedUrl(lat,lng,h);
-  const panel=document.getElementById("sv-panel");
-  panel.classList.remove("hidden");
-  document.getElementById("sv-addr").textContent=lat.toFixed(4)+", "+lng.toFixed(4);
+  setInfoBar("📷","Street View — "+lat.toFixed(4)+", "+lng.toFixed(4));
+  setInfoContent('<iframe class="info-sv-frame" src="'+svEmbedUrl(lat,lng,h)+'" allowfullscreen loading="lazy"></iframe>');
 }
-window.closeSV=function(){document.getElementById("sv-panel").classList.add("hidden");document.getElementById("sv-iframe").src=""};
+window.closeSV=function(){clearInfoArea()};
 window.openSV=openSV;
 
 /* ═══════════════════ 4b. SV GALLERY (multiple candidates) ═══════════════════ */
 const catNames={intersection:"交差点",convenience_store:"コンビニ",gas_station:"ガソリンスタンド",store:"店舗",school:"学校",temple_shrine:"神社・寺",parking:"駐車場"};
-let galMarkers=[];
+let galMarkers=[],curGalleryItems=[];
 
 function svEmbedUrl(lat,lng,heading){
   return`https://www.google.com/maps/embed/v1/streetview?key=AIzaSyB7--VFS8Fz9_vsnHbiB17JCjJEjGeeq0E&location=${lat},${lng}&heading=${heading||0}&pitch=0&fov=90`;
@@ -577,100 +574,40 @@ function showSVGallery(cat){
   const g=a.gps;
   const lms=a.landmarks.filter(l=>l.cat===cat).map(l=>({...l,d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})).sort((x,y)=>x.d-y.d);
   if(!lms.length)return;
-  const show=lms.slice(0,5);
+  const show=lms.slice(0,6);
 
-  aiHide();
   clearGalMarkers();
+  curGalleryItems=show;
 
-  // Add numbered markers on map
   show.forEach((l,i)=>{
     const el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=l.name+" ("+l.d+"m)";
-    el.addEventListener("click",e=>{e.stopPropagation();flyTo(l.lat,l.lng,18);openSV(l.lat,l.lng,l.heading||0);
-      // Also highlight in gallery
-      const ge=document.querySelector(`.svg-entry[data-name="${l.name}"]`);
-      if(ge){document.querySelectorAll(".svg-entry").forEach(x=>x.classList.remove("active"));ge.classList.add("active")}
-    });
-    const mk=new maplibregl.Marker({element:el}).setLngLat([l.lng,l.lat]).addTo(map);
-    galMarkers.push(mk);
+    el.addEventListener("click",e=>{e.stopPropagation();selectInfoTab(i,show)});
+    galMarkers.push(new maplibregl.Marker({element:el}).setLngLat([l.lng,l.lat]).addTo(map));
   });
 
-  const panel=document.getElementById("sv-gallery");
-  const body=document.getElementById("svg-body");
-  panel.querySelector(".svg-title").textContent="📷 "+(catNames[cat]||cat)+" のストリートビュー";
-  panel.querySelector(".svg-count").textContent=show.length+"件";
-
-  body.innerHTML=show.map((l,i)=>`<div class="svg-entry" data-name="${esc(l.name)}" data-lat="${l.lat}" data-lng="${l.lng}" data-h="${l.heading||0}" data-idx="${i}">
-    <div class="svg-entry-hd">
-      <span class="svg-rank">${i+1}</span>
-      <span class="svg-icon">${catI(l.cat)}</span>
-      <span class="svg-name">${esc(l.name)}</span>
-      <span class="svg-dist">${l.d}m</span>
-      <button class="svg-popup-btn" title="パネルで拡大表示">⛶</button>
-    </div>
-    <div class="svg-frame-wrap">
-      <iframe class="svg-frame" src="${svEmbedUrl(l.lat,l.lng,l.heading)}" allowfullscreen loading="lazy"></iframe>
-    </div>
-  </div>`).join("");
-
-  // Header click → select + fly to + highlight map marker
-  body.querySelectorAll(".svg-entry-hd").forEach(hd=>{
-    hd.addEventListener("click",function(e){
-      if(e.target.closest(".svg-popup-btn"))return;
-      const entry=this.closest(".svg-entry");
-      const idx=+entry.dataset.idx;
-      body.querySelectorAll(".svg-entry").forEach(x=>x.classList.remove("active"));
-      entry.classList.add("active");
-      flyTo(+entry.dataset.lat,+entry.dataset.lng,18);
-      // Pulse the map marker
-      galMarkers.forEach((mk,mi)=>{const el=mk.getElement();if(el){el.style.transform=mi===idx?"scale(1.4)":"";el.style.boxShadow=mi===idx?"0 0 16px rgba(46,204,113,.8)":""}});
-    });
-  });
-
-  // Popup button → open SV in separate window
-  body.querySelectorAll(".svg-popup-btn").forEach(btn=>{
-    btn.addEventListener("click",function(e){
-      e.stopPropagation();
-      const entry=this.closest(".svg-entry");
-      openSV(+entry.dataset.lat,+entry.dataset.lng,+entry.dataset.h);
-    });
-  });
-
-  panel.classList.remove("hidden");
-  requestAnimationFrame(()=>panel.classList.add("visible"));
+  setInfoBar("📷",(catNames[cat]||cat)+" — SV候補 "+show.length+"件");
+  fitB(show.map(l=>({lat:l.lat,lng:l.lng})),80);
+  renderInfoGallery(show);
 }
 
 function narrowSVGallery(name){
-  const body=document.getElementById("svg-body");
-  body.querySelectorAll(".svg-entry").forEach(el=>{
-    if(el.dataset.name===name){
-      el.classList.add("active");
-      el.classList.remove("eliminated");
-      if(!el.querySelector(".svg-match-label")){
-        const lbl=document.createElement("div");
-        lbl.className="svg-match-label";
-        lbl.textContent="✓ 通報者の発言と一致";
-        el.appendChild(lbl);
-      }
-      flyTo(+el.dataset.lat,+el.dataset.lng,18);
-    }else{
-      el.classList.add("eliminated");
-    }
-  });
-  // Dim non-matching map markers
-  const matched=body.querySelector(".svg-entry.active");
-  const matchIdx=matched?+matched.dataset.idx:-1;
-  galMarkers.forEach((mk,mi)=>{
-    const el=mk.getElement();if(!el)return;
-    if(mi===matchIdx){el.classList.remove("dimmed")}
-    else{el.classList.add("dimmed")}
-  });
+  if(!curGalleryItems.length)return;
+  const idx=curGalleryItems.findIndex(it=>it.name===name);
+  if(idx>=0){
+    selectInfoTab(idx,curGalleryItems);
+    galMarkers.forEach((mk,mi)=>{
+      const el=mk.getElement();if(!el)return;
+      if(mi===idx){el.classList.remove("dimmed")}else{el.classList.add("dimmed")}
+    });
+    document.querySelectorAll(".info-sv-tab").forEach((t,i)=>{
+      if(i===idx){t.style.background="#27ae60";t.style.borderColor="#27ae60"}
+    });
+  }
 }
 
 function hideSVGallery(){
-  const panel=document.getElementById("sv-gallery");
-  panel.classList.remove("visible");
-  setTimeout(()=>panel.classList.add("hidden"),300);
   clearGalMarkers();
+  curGalleryItems=[];
 }
 window.hideSVGallery=hideSVGallery;
 
@@ -746,15 +683,15 @@ function qAns(label){
 
 /* ═══════════════════ 8. AI DIALOG ═══════════════════ */
 function aiShow(color,icon,title,sub,html){
-  const d=document.getElementById("ai-dialog");
-  d.style.borderRightColor=color;d.querySelector(".ai-icon").style.background=color;d.querySelector(".ai-icon").textContent=icon;
+  const d=document.getElementById("ai-area");
+  d.style.borderTopColor=color;d.querySelector(".ai-icon").style.background=color;d.querySelector(".ai-icon").textContent=icon;
   document.getElementById("ai-title").textContent=title;
   document.getElementById("ai-subtitle").textContent=sub;
   document.getElementById("ai-body").innerHTML=html;
-  d.classList.remove("hidden");requestAnimationFrame(()=>d.classList.add("visible"));
+  d.classList.remove("hidden");
   setAI("ai-suggest","AI: 提案あり");
 }
-function aiHide(){const d=document.getElementById("ai-dialog");d.classList.remove("visible");setTimeout(()=>d.classList.add("hidden"),250);setAI("ai-idle","AI: 待機中")}
+function aiHide(){document.getElementById("ai-area").classList.add("hidden");setAI("ai-idle","AI: 待機中")}
 
 function renderQ(q){
   if(!q)return"";
