@@ -55,6 +55,7 @@
             <option value="area_e">E: 複数コンビニ（松戸）</option>
             <option value="area_f">F: 類似団地棟（松戸・野菊野）</option>
             <option value="area_g">G: 複合対応（北松戸・GPS+ビル+テナント）</option>
+            <option value="area_free">H: フリー会話</option>
           </select>
         </div>
         <div id="rp-btn-row">
@@ -80,6 +81,17 @@
       <div id="rp-footer">
         <button id="btn-next" class="dbtn-next" disabled>次へ →</button>
         <div id="step-counter" class="step-counter"></div>
+        <div id="free-input" class="hidden">
+          <div id="free-speaker-row">
+            <button class="free-spk active" data-s="C">通報者</button>
+            <button class="free-spk" data-s="D">指令員</button>
+            <button class="free-spk" data-s="S">System</button>
+          </div>
+          <div id="free-text-row">
+            <input id="free-text" type="text" placeholder="テキストを入力..." autocomplete="off">
+            <button id="free-send">送信</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

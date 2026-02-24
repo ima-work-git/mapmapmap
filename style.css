@@ -38,7 +38,19 @@ body{font-family:'Hiragino Kaku Gothic ProN',Meiryo,'Noto Sans JP',sans-serif;ov
 #transcript-lines{display:flex;flex-direction:column;gap:4px}
 .tl-placeholder{color:#555;font-size:13px;padding:30px 0;text-align:center}
 
-#rp-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;gap:14px;flex-shrink:0}
+#rp-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;flex-shrink:0}
+
+/* ── Free Input ── */
+#free-input{width:100%}
+#free-speaker-row{display:flex;gap:4px;margin-bottom:6px}
+.free-spk{padding:4px 10px;border:1px solid #555;background:transparent;color:#95a5a6;border-radius:4px;font-size:11px;cursor:pointer;font-family:inherit;transition:.2s}
+.free-spk.active{background:#e67e22;color:#fff;border-color:#e67e22}
+.free-spk:hover:not(.active){background:rgba(255,255,255,.1)}
+#free-text-row{display:flex;gap:6px}
+#free-text{flex:1;background:#2c3e50;color:#ecf0f1;border:1px solid #555;border-radius:4px;padding:6px 10px;font-size:13px;font-family:inherit;outline:none}
+#free-text:focus{border-color:#3498db}
+#free-send{padding:6px 14px;background:#e67e22;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s}
+#free-send:hover{background:#d35400}
 
 /* ── Search ── */
 #search-wrap{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:50;width:460px}

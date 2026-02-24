@@ -317,6 +317,24 @@ function buildScenarioKeywords(sid){
   const seen=new Set();
   return kws.filter(kw=>{if(seen.has(kw.text))return false;seen.add(kw.text);return true});
 }
+function buildAllKeywords(){
+  const kws=[];
+  Object.keys(DEMO).forEach(function(sid){
+    const data=DEMO[sid];if(!data)return;
+    if(data.buildings)data.buildings.forEach(function(b){kws.push({text:b.np,cat:"person",data:{lat:b.lat,lng:b.lng,eb:b.eb||0}})});
+    if(data.mansions)data.mansions.forEach(function(m){kws.push({text:m.name,cat:"building",data:{lat:m.lat,lng:m.lng}})});
+    if(data.landmarks)data.landmarks.forEach(function(l){kws.push({text:l.name,cat:"landmark",data:{lat:l.lat,lng:l.lng,heading:l.heading||0}})});
+    if(data.pois)data.pois.forEach(function(p){kws.push({text:p.name,cat:"poi",data:{lat:p.lat,lng:p.lng}})});
+    if(data.building)kws.push({text:data.building.name,cat:"building",data:{lat:data.building.lat,lng:data.building.lng}});
+    if(data.ext)kws.push({text:data.ext.name,cat:"tenant",data:{lat:data.ext.lat,lng:data.ext.lng}});
+    if(data.tenants)data.tenants.forEach(function(t){if(t.name!=="テナント")kws.push({text:t.name,cat:"tenant",data:{lat:data.building?data.building.lat:0,lng:data.building?data.building.lng:0,fl:t.fl}})});
+    if(data.tenants_g3){var bld=data.mansions&&data.mansions[2];data.tenants_g3.forEach(function(t){if(t.name!=="（空室）"&&t.name!=="屋上（機械室）"&&t.name!=="テナント")kws.push({text:t.name,cat:"tenant",data:{lat:bld?bld.lat:0,lng:bld?bld.lng:0,fl:t.fl}})})}
+    kws.push.apply(kws,EXTRA_KW[sid]||[]);
+  });
+  kws.sort(function(a,b){return b.text.length-a.text.length});
+  var seen=new Set();
+  return kws.filter(function(kw){if(seen.has(kw.text))return false;seen.add(kw.text);return true});
+}
 
 function kwTip(cat){
   return({"address":"地図で表示","person":"建物のSVを表示","building":"SVで確認","building-group":"候補を地図に表示","landmark":"SVで確認","poi":"SVで確認","tenant":"建物のSVを表示","store-cat":"候補一覧を表示","floor":"テナント情報を表示","feature":"関連情報を表示"})[cat]||"クリックで詳細";
@@ -413,31 +431,35 @@ function doKwGmap(data,cat,text){
 
 /* ── Building Info renderer ── */
 function renderBuildingInfo(d,cat,text){
-  const a=DEMO[curScenario];if(!a)return'<div class="info-placeholder">情報なし</div>';
-  if(cat==="person"&&a.buildings){
-    const b=a.buildings.find(x=>x.np===text||(x.lat===d.lat&&x.lng===d.lng));
-    if(b)return'<div class="binfo"><div class="binfo-hd">'+esc(b.np)+'宅</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(b.addr)+'</td></tr><tr><td class="binfo-k">建物</td><td>'+typeL(b.type)+" "+b.fl+'階建て</td></tr><tr><td class="binfo-k">位置</td><td>'+esc(b.feat.pos)+'</td></tr><tr><td class="binfo-k">右隣</td><td>'+esc(b.feat.r)+'</td></tr><tr><td class="binfo-k">左隣</td><td>'+esc(b.feat.l)+'</td></tr><tr><td class="binfo-k">向かい</td><td>'+esc(b.feat.ac)+'</td></tr><tr><td class="binfo-k">裏手</td><td>'+esc(b.feat.bk)+'</td></tr></table></div>';
-  }
-  if((cat==="building"||cat==="tenant")&&a.mansions){
-    const m=a.mansions.find(x=>x.lat===d.lat&&x.lng===d.lng);
-    if(m){let h='<div class="binfo"><div class="binfo-hd">'+esc(m.name)+'</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(m.addr)+'</td></tr><tr><td class="binfo-k">規模</td><td>'+m.fl+'階建て / '+m.units+'戸</td></tr><tr><td class="binfo-k">特徴</td><td>'+m.feats.join("、")+'</td></tr></table>';
-      if(a.tenants_g3&&m.id==="G3")h+=renderTenantList(a.tenants_g3,d.fl);return h+"</div>";}
-  }
-  if((cat==="building"||cat==="tenant")&&a.building){
-    if(a.building.lat===d.lat||a.building.name===text){
-      let h='<div class="binfo"><div class="binfo-hd">'+esc(a.building.name)+'</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(a.building.addr)+'</td></tr><tr><td class="binfo-k">登記</td><td>'+esc(a.building.reg)+'</td></tr></table>';
-      if(a.tenants)h+=renderTenantList(a.tenants,d.fl);return h+"</div>";}
-  }
-  if(cat==="building-group"&&a.mansions){
-    let h='<div class="binfo"><div class="binfo-hd">'+esc(text)+" ("+a.mansions.length+'棟)</div>';
-    a.mansions.forEach(function(m,i){h+='<div class="binfo-cand" data-lat="'+m.lat+'" data-lng="'+m.lng+'"><span class="binfo-num">'+(i+1)+'</span><span class="binfo-cand-name">'+esc(m.name)+'</span><div class="binfo-cand-meta">'+m.fl+'階建て/'+m.units+'戸 — '+m.feats.join("、")+"</div></div>"});
-    return h+"</div>";
-  }
-  if(cat==="floor"){
-    const fl=d.fl,ts=a.tenants||a.tenants_g3,bn=d.bname||(a.building?a.building.name:"");
-    if(ts){const t=ts.find(function(x){return x.fl==fl});
-      if(t){let h='<div class="binfo"><div class="binfo-hd">'+fl+'階の情報</div><table class="binfo-tbl"><tr><td class="binfo-k">テナント</td><td style="font-weight:700;color:#e74c3c">'+esc(t.name)+"</td></tr>"+(bn?'<tr><td class="binfo-k">ビル</td><td>'+esc(bn)+"</td></tr>":"")+"</table>";
-        h+=renderTenantList(ts,fl);return h+"</div>";}
+  /* フリー会話モードでは全DEMO横断検索、通常は現シナリオのみ */
+  var sids=curScenario==="area_free"?Object.keys(DEMO):curScenario?[curScenario]:[];
+  for(var si=0;si<sids.length;si++){
+    var a=DEMO[sids[si]];if(!a)continue;
+    if(cat==="person"&&a.buildings){
+      var b=a.buildings.find(function(x){return x.np===text||(x.lat===d.lat&&x.lng===d.lng)});
+      if(b)return'<div class="binfo"><div class="binfo-hd">'+esc(b.np)+'宅</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(b.addr)+'</td></tr><tr><td class="binfo-k">建物</td><td>'+typeL(b.type)+" "+b.fl+'階建て</td></tr><tr><td class="binfo-k">位置</td><td>'+esc(b.feat.pos)+'</td></tr><tr><td class="binfo-k">右隣</td><td>'+esc(b.feat.r)+'</td></tr><tr><td class="binfo-k">左隣</td><td>'+esc(b.feat.l)+'</td></tr><tr><td class="binfo-k">向かい</td><td>'+esc(b.feat.ac)+'</td></tr><tr><td class="binfo-k">裏手</td><td>'+esc(b.feat.bk)+'</td></tr></table></div>';
+    }
+    if((cat==="building"||cat==="tenant")&&a.mansions){
+      var m=a.mansions.find(function(x){return x.lat===d.lat&&x.lng===d.lng});
+      if(m){var h='<div class="binfo"><div class="binfo-hd">'+esc(m.name)+'</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(m.addr)+'</td></tr><tr><td class="binfo-k">規模</td><td>'+m.fl+'階建て / '+m.units+'戸</td></tr><tr><td class="binfo-k">特徴</td><td>'+m.feats.join("、")+'</td></tr></table>';
+        if(a.tenants_g3&&m.id==="G3")h+=renderTenantList(a.tenants_g3,d.fl);return h+"</div>";}
+    }
+    if((cat==="building"||cat==="tenant")&&a.building){
+      if(a.building.lat===d.lat||a.building.name===text){
+        var h2='<div class="binfo"><div class="binfo-hd">'+esc(a.building.name)+'</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(a.building.addr)+'</td></tr><tr><td class="binfo-k">登記</td><td>'+esc(a.building.reg)+'</td></tr></table>';
+        if(a.tenants)h2+=renderTenantList(a.tenants,d.fl);return h2+"</div>";}
+    }
+    if(cat==="building-group"&&a.mansions){
+      var h3='<div class="binfo"><div class="binfo-hd">'+esc(text)+" ("+a.mansions.length+'棟)</div>';
+      a.mansions.forEach(function(mm,i){h3+='<div class="binfo-cand" data-lat="'+mm.lat+'" data-lng="'+mm.lng+'"><span class="binfo-num">'+(i+1)+'</span><span class="binfo-cand-name">'+esc(mm.name)+'</span><div class="binfo-cand-meta">'+mm.fl+'階建て/'+mm.units+'戸 — '+mm.feats.join("、")+"</div></div>"});
+      return h3+"</div>";
+    }
+    if(cat==="floor"){
+      var fl=d.fl,ts=a.tenants||a.tenants_g3,bn=d.bname||(a.building?a.building.name:"");
+      if(ts){var t=ts.find(function(x){return x.fl==fl});
+        if(t){var h4='<div class="binfo"><div class="binfo-hd">'+fl+'階の情報</div><table class="binfo-tbl"><tr><td class="binfo-k">テナント</td><td style="font-weight:700;color:#e74c3c">'+esc(t.name)+"</td></tr>"+(bn?'<tr><td class="binfo-k">ビル</td><td>'+esc(bn)+"</td></tr>":"")+"</table>";
+          h4+=renderTenantList(ts,fl);return h4+"</div>";}
+      }
     }
   }
   return'<div class="info-placeholder">詳細情報なし</div>';
@@ -450,25 +472,33 @@ function renderTenantList(tenants,hlFl){
 
 /* ── SV Gallery in info area ── */
 function showInfoSVGallery(storeCat,text){
-  const a=DEMO[curScenario];if(!a||!a.landmarks||!a.gps)return;
-  const g=a.gps,items=a.landmarks.filter(function(l){return l.cat===storeCat}).map(function(l){return Object.assign({},l,{d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})}).sort(function(x,y){return x.d-y.d}).slice(0,6);
-  if(!items.length)return;
+  /* フリーモード: 全シナリオの landmarks を統合 */
+  var sids=curScenario==="area_free"?Object.keys(DEMO):[curScenario];
+  var gps=null,raw=[];
+  for(var i=0;i<sids.length;i++){var a=DEMO[sids[i]];if(!a)continue;if(a.gps&&!gps)gps=a.gps;
+    if(a.landmarks)a.landmarks.forEach(function(l){if(l.cat===storeCat)raw.push(l)});}
+  if(!raw.length)return;
+  var items=raw.map(function(l){return Object.assign({},l,{d:gps?Math.round(hav(gps.lat,gps.lng,l.lat,l.lng)):0})}).sort(function(x,y){return x.d-y.d}).slice(0,6);
   setInfoBar("📷",(catNames[storeCat]||text)+" — SV候補 "+items.length+"件");
   clearGalMarkers();
-  items.forEach(function(l,i){var el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=l.name+" ("+l.d+"m)";
+  items.forEach(function(l,i){var el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=l.name+(l.d?" ("+l.d+"m)":"");
     el.addEventListener("click",function(e){e.stopPropagation();selectInfoTab(i,items)});
     galMarkers.push(new maplibregl.Marker({element:el}).setLngLat([l.lng,l.lat]).addTo(map))});
-  fitB(items.map(function(l){return{lat:l.lat,lng:l.lng}}),80);renderInfoGallery(items);
+  renderInfoGallery(items);
 }
 function showInfoSVGalleryBuildings(text){
-  const a=DEMO[curScenario];if(!a||!a.mansions)return;
-  const items=a.mansions.map(function(m){return{name:m.name,lat:m.lat,lng:m.lng,heading:0,cat:"building",d:"",fl:m.fl,feats:m.feats}});
-  setInfoBar("📷",text+" — SV候補 "+items.length+"件");
+  /* フリーモード: 全シナリオの mansions を統合 */
+  var sids=curScenario==="area_free"?Object.keys(DEMO):[curScenario];
+  var raw=[];
+  for(var i=0;i<sids.length;i++){var a=DEMO[sids[i]];if(!a||!a.mansions)continue;
+    a.mansions.forEach(function(m){raw.push({name:m.name,lat:m.lat,lng:m.lng,heading:0,cat:"building",d:"",fl:m.fl,feats:m.feats})});}
+  if(!raw.length)return;
+  setInfoBar("📷",text+" — SV候補 "+raw.length+"件");
   clearGalMarkers();
-  items.forEach(function(m,i){var el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=m.name;
-    el.addEventListener("click",function(e){e.stopPropagation();selectInfoTab(i,items)});
+  raw.forEach(function(m,i){var el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=m.name;
+    el.addEventListener("click",function(e){e.stopPropagation();selectInfoTab(i,raw)});
     galMarkers.push(new maplibregl.Marker({element:el}).setLngLat([m.lng,m.lat]).addTo(map))});
-  fitB(items.map(function(m){return{lat:m.lat,lng:m.lng}}),80);renderInfoGallery(items);
+  renderInfoGallery(raw);
 }
 function renderInfoGallery(items){
   let h='<div style="display:flex;flex-direction:column;height:100%"><div class="info-sv-tabs">';
@@ -519,8 +549,10 @@ function initMap(){
   }));
 }
 
-function flyTo(lat,lng,z){map.flyTo({center:[lng,lat],zoom:z||18,duration:1500,essential:true})}
-function fitB(pts,p){if(!pts.length)return;const b=new maplibregl.LngLatBounds();pts.forEach(v=>b.extend([v.lng,v.lat]));map.fitBounds(b,{padding:p||80,duration:1e3})}
+/* flyTo/fitB は指令員操作の妨げ防止のため no-op。GPS のみ gpsMoveTo で地図遷移 */
+function flyTo(){}
+function fitB(){}
+function gpsMoveTo(lat,lng,z){map.flyTo({center:[lng,lat],zoom:z||18,duration:1500,essential:true})}
 function addM(lat,lng,o){
   const el=document.createElement("div");el.className="marker "+(o.cls||"");el.innerHTML=o.label||"";if(o.title)el.title=o.title;
   const mk=new maplibregl.Marker({element:el}).setLngLat([lng,lat]).addTo(map);
@@ -779,23 +811,32 @@ let curScenario=null,curStep=-1,curScript=null;
 
 function initPlayer(){
   const btnStart=document.getElementById("btn-start"),btnReset=document.getElementById("btn-reset"),btnNext=document.getElementById("btn-next"),sel=document.getElementById("demo-scenario");
+  const freeEl=document.getElementById("free-input"),freeText=document.getElementById("free-text"),freeSend=document.getElementById("free-send");
 
-  sel.addEventListener("change",function(){if(!curScript){const a=DEMO[this.value];if(a)flyTo(a.center[1],a.center[0],15)}});
+  sel.addEventListener("change",function(){if(!curScript&&this.value!=="area_free"){const a=DEMO[this.value];if(a)flyTo(a.center[1],a.center[0],15)}});
+
+  function showFreeUI(){freeEl.classList.remove("hidden");btnNext.style.display="none";document.getElementById("step-counter").style.display="none"}
+  function hideFreeUI(){freeEl.classList.add("hidden");btnNext.style.display="";document.getElementById("step-counter").style.display="";freeText.value=""}
 
   btnStart.addEventListener("click",()=>{
-    curScenario=sel.value;curScript=SCRIPTS[curScenario];curStep=-1;
-    resetUI();curKeywords=buildScenarioKeywords(curScenario);
+    curScenario=sel.value;curStep=-1;
+    resetUI();
     setBadge("call-status","active","受付中");startTimer();
-    const a=DEMO[curScenario];if(a)flyTo(a.center[1],a.center[0],15);
     btnStart.classList.add("hidden");btnReset.classList.remove("hidden");sel.disabled=true;
-    btnNext.disabled=false;
     document.getElementById("transcript-lines").innerHTML="";
-    document.getElementById("step-counter").textContent=`0 / ${curScript.length}`;
+    if(curScenario==="area_free"){
+      curScript=null;curKeywords=buildAllKeywords();
+      showFreeUI();freeText.focus();
+    }else{
+      curScript=SCRIPTS[curScenario];curKeywords=buildScenarioKeywords(curScenario);
+      btnNext.disabled=false;
+      document.getElementById("step-counter").textContent=`0 / ${curScript.length}`;
+    }
   });
 
   btnReset.addEventListener("click",()=>{
     curScript=null;curStep=-1;curScenario=null;
-    resetUI();stopTimer();
+    resetUI();stopTimer();hideFreeUI();
     btnStart.classList.remove("hidden");btnReset.classList.add("hidden");sel.disabled=false;
     btnNext.disabled=true;
     document.getElementById("transcript-lines").innerHTML=`<div class="tl-placeholder">シナリオを選択して「開始」をクリック</div>`;
@@ -804,6 +845,19 @@ function initPlayer(){
   });
 
   btnNext.addEventListener("click",advance);
+
+  /* ── Free conversation input ── */
+  function sendFree(){
+    const text=freeText.value.trim();if(!text)return;
+    const spk=document.querySelector(".free-spk.active").dataset.s;
+    appendLine({s:spk,t:text});
+    freeText.value="";freeText.focus();
+  }
+  freeSend.addEventListener("click",sendFree);
+  freeText.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();sendFree()}});
+  document.querySelectorAll(".free-spk").forEach(function(btn){
+    btn.addEventListener("click",function(){document.querySelectorAll(".free-spk").forEach(function(b){b.classList.remove("active")});this.classList.add("active");freeText.focus()});
+  });
 }
 
 function advance(){
@@ -842,7 +896,7 @@ function execAction(a){
     const gLng=a.lng||(d&&d.gps?d.gps.lng:0);
     const gAcc=a.acc||(d&&d.gps?d.gps.acc:150);
     if(d&&d.gps){d.gps.acc=gAcc}
-    clearM();flyTo(gLat,gLng,16);showGPS(gLat,gLng,gAcc);
+    clearM();gpsMoveTo(gLat,gLng,16);showGPS(gLat,gLng,gAcc);
     addM(gLat,gLng,{cls:"gps-m",label:"📡",title:"GPS ±"+gAcc+"m"});
     setGPSBadge(gAcc);
   }
