@@ -249,6 +249,113 @@ area_g:[
   {s:"S",t:"📍 住所確定: 千葉県松戸市上本郷902-1 北松戸第3ビル4F スナック都",a:{type:"confirm_d",id:"G3"}},
 ]};
 
+/* ═══════════════════ 2b. KEYWORD SYSTEM ═══════════════════ */
+let curKeywords=[];
+
+const EXTRA_KW={
+  area_a:[
+    {text:"1234番地",cat:"address",data:{lat:35.7838,lng:139.9011,z:17}},
+    {text:"松戸市松戸",cat:"address",data:{lat:35.7838,lng:139.9011,z:15}},
+    {text:"月極駐車場",cat:"feature",data:{lat:35.78375,lng:139.90115}},
+    {text:"コンビニ",cat:"store-cat",data:{storeCat:"convenience_store"}},
+    {text:"公園",cat:"poi",data:{lat:35.78360,lng:139.90090}}
+  ],
+  area_b:[
+    {text:"交差点",cat:"store-cat",data:{storeCat:"intersection"}},
+    {text:"コンビニ",cat:"store-cat",data:{storeCat:"convenience_store"}}
+  ],
+  area_c:[
+    {text:"チェルシー",cat:"tenant",data:{lat:35.78494,lng:139.90017}},
+    {text:"5階",cat:"floor",data:{fl:5,bname:"新角ビル",lat:35.78494,lng:139.90017}}
+  ],
+  area_d:[
+    {text:"ライオンズマンション鎌ケ谷",cat:"building-group",data:{lat:35.7700,lng:140.0010,z:15}},
+    {text:"ローソン",cat:"store-cat",data:{storeCat:"convenience_store"}},
+    {text:"コンビニ",cat:"store-cat",data:{storeCat:"convenience_store"}},
+    {text:"5階",cat:"floor",data:{fl:5}}
+  ],
+  area_e:[
+    {text:"コンビニ",cat:"store-cat",data:{storeCat:"convenience_store"}},
+    {text:"ローソン",cat:"store-cat",data:{storeCat:"convenience_store"}},
+    {text:"交差点",cat:"store-cat",data:{storeCat:"intersection"}}
+  ],
+  area_f:[
+    {text:"野菊野団地",cat:"building-group",data:{lat:35.7795,lng:139.9140,z:16}},
+    {text:"1号棟",cat:"building",data:{lat:35.7800,lng:139.9153}},
+    {text:"2号棟",cat:"building",data:{lat:35.77972,lng:139.91481}},
+    {text:"3号棟",cat:"building",data:{lat:35.7795,lng:139.9144}},
+    {text:"4号棟",cat:"building",data:{lat:35.77934,lng:139.91395}},
+    {text:"5号棟",cat:"building",data:{lat:35.7791,lng:139.9136}},
+    {text:"バス停",cat:"poi",data:{lat:35.7791,lng:139.9130}},
+    {text:"ロータリー",cat:"poi",data:{lat:35.7791,lng:139.9130}},
+    {text:"8階建て",cat:"feature",data:{lat:35.7795,lng:139.9144,desc:"3号棟（唯一の8階建て）"}},
+    {text:"10階",cat:"floor",data:{fl:10}}
+  ],
+  area_g:[
+    {text:"セブンイレブン",cat:"store-cat",data:{storeCat:"convenience_store"}},
+    {text:"コンビニ",cat:"store-cat",data:{storeCat:"convenience_store"}},
+    {text:"交差点",cat:"store-cat",data:{storeCat:"intersection"}},
+    {text:"スナック",cat:"tenant",data:{lat:35.7940,lng:139.9046,fl:4,name:"スナック都"}},
+    {text:"4階",cat:"floor",data:{fl:4,bname:"北松戸第3ビル",lat:35.7940,lng:139.9046}},
+    {text:"9階",cat:"feature",data:{lat:35.7940,lng:139.9046,desc:"北松戸第3ビル（9階建て）"}}
+  ]
+};
+
+function buildScenarioKeywords(sid){
+  const data=DEMO[sid];if(!data)return[];
+  const kws=[];
+  if(data.buildings)data.buildings.forEach(b=>{kws.push({text:b.np,cat:"person",data:{lat:b.lat,lng:b.lng,eb:b.eb||0}})});
+  if(data.mansions)data.mansions.forEach(m=>{kws.push({text:m.name,cat:"building",data:{lat:m.lat,lng:m.lng}})});
+  if(data.landmarks)data.landmarks.forEach(l=>{kws.push({text:l.name,cat:"landmark",data:{lat:l.lat,lng:l.lng,heading:l.heading||0}})});
+  if(data.pois)data.pois.forEach(p=>{kws.push({text:p.name,cat:"poi",data:{lat:p.lat,lng:p.lng}})});
+  if(data.building)kws.push({text:data.building.name,cat:"building",data:{lat:data.building.lat,lng:data.building.lng}});
+  if(data.ext)kws.push({text:data.ext.name,cat:"tenant",data:{lat:data.ext.lat,lng:data.ext.lng}});
+  if(data.tenants)data.tenants.forEach(t=>{if(t.name!=="テナント")kws.push({text:t.name,cat:"tenant",data:{lat:data.building?data.building.lat:0,lng:data.building?data.building.lng:0,fl:t.fl}})});
+  if(data.tenants_g3){const bld=data.mansions&&data.mansions[2];data.tenants_g3.forEach(t=>{if(t.name!=="（空室）"&&t.name!=="屋上（機械室）"&&t.name!=="テナント")kws.push({text:t.name,cat:"tenant",data:{lat:bld?bld.lat:0,lng:bld?bld.lng:0,fl:t.fl}})})}
+  kws.push(...(EXTRA_KW[sid]||[]));
+  kws.sort((a,b)=>b.text.length-a.text.length);
+  const seen=new Set();
+  return kws.filter(kw=>{if(seen.has(kw.text))return false;seen.add(kw.text);return true});
+}
+
+function kwTip(cat){
+  return({"address":"地図で表示","person":"建物のSVを表示","building":"SVで確認","building-group":"候補を地図に表示","landmark":"SVで確認","poi":"SVで確認","tenant":"建物のSVを表示","store-cat":"候補一覧を表示","floor":"テナント情報を表示","feature":"関連情報を表示"})[cat]||"クリックで詳細";
+}
+
+function highlightText(text,keywords){
+  if(!keywords||!keywords.length)return esc(text);
+  const matches=[];
+  for(const kw of keywords){let p=0;while(true){const i=text.indexOf(kw.text,p);if(i===-1)break;matches.push({start:i,end:i+kw.text.length,kw});p=i+1}}
+  matches.sort((a,b)=>a.start-b.start||(b.end-b.start)-(a.end-a.start));
+  const fil=[];let le=0;
+  for(const m of matches){if(m.start>=le){fil.push(m);le=m.end}}
+  let html="",pos=0;
+  for(const m of fil){
+    if(m.start>pos)html+=esc(text.substring(pos,m.start));
+    const ds=JSON.stringify(m.kw.data||{}).replace(/'/g,"&#39;");
+    html+=`<span class="kw kw-${m.kw.cat}" data-cat="${m.kw.cat}" data-kw='${ds}' title="${kwTip(m.kw.cat)}">${esc(text.substring(m.start,m.end))}</span>`;
+    pos=m.end;
+  }
+  if(pos<text.length)html+=esc(text.substring(pos));
+  return html;
+}
+
+function handleKeywordClick(el){
+  const cat=el.dataset.cat,data=JSON.parse(el.dataset.kw||"{}");
+  switch(cat){
+    case"address":flyTo(data.lat,data.lng,data.z||17);break;
+    case"person":flyTo(data.lat,data.lng,19);openSV(data.lat,data.lng,((data.eb||0)+180)%360);break;
+    case"building":flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng);break;
+    case"building-group":flyTo(data.lat,data.lng,data.z||15);break;
+    case"landmark":flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng,data.heading||0);break;
+    case"poi":if(data.lat&&data.lng){flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng)}break;
+    case"tenant":if(data.lat&&data.lng){flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng)}break;
+    case"store-cat":if(data.storeCat)showSVGallery(data.storeCat);break;
+    case"floor":if(data.lat&&data.lng){flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng)}break;
+    case"feature":if(data.lat&&data.lng){flyTo(data.lat,data.lng,19);openSV(data.lat,data.lng)}break;
+  }
+}
+
 /* ═══════════════════ 3. MAP ═══════════════════ */
 let map,markers=[],gpsReady=false,ctxLL=null;
 
@@ -510,7 +617,7 @@ function qAns(label){
 /* ═══════════════════ 8. AI DIALOG ═══════════════════ */
 function aiShow(color,icon,title,sub,html){
   const d=document.getElementById("ai-dialog");
-  d.style.borderLeftColor=color;d.querySelector(".ai-icon").style.background=color;d.querySelector(".ai-icon").textContent=icon;
+  d.style.borderRightColor=color;d.querySelector(".ai-icon").style.background=color;d.querySelector(".ai-icon").textContent=icon;
   document.getElementById("ai-title").textContent=title;
   document.getElementById("ai-subtitle").textContent=sub;
   document.getElementById("ai-body").innerHTML=html;
@@ -614,7 +721,7 @@ function initPlayer(){
 
   btnStart.addEventListener("click",()=>{
     curScenario=sel.value;curScript=SCRIPTS[curScenario];curStep=-1;
-    resetUI();
+    resetUI();curKeywords=buildScenarioKeywords(curScenario);
     setBadge("call-status","active","受付中");startTimer();
     const a=DEMO[curScenario];if(a)flyTo(a.center[1],a.center[0],15);
     btnStart.classList.add("hidden");btnReset.classList.remove("hidden");sel.disabled=true;
@@ -628,7 +735,8 @@ function initPlayer(){
     resetUI();stopTimer();
     btnStart.classList.remove("hidden");btnReset.classList.add("hidden");sel.disabled=false;
     btnNext.disabled=true;
-    document.getElementById("transcript-lines").innerHTML=`<div class="tl-placeholder">← シナリオを選択して「開始」をクリック</div>`;
+    document.getElementById("transcript-lines").innerHTML=`<div class="tl-placeholder">シナリオを選択して「開始」をクリック</div>`;
+    curKeywords=[];
     document.getElementById("step-counter").textContent="";
   });
 
@@ -655,7 +763,7 @@ function appendLine(line){
   const clsMap={C:"caller",D:"dispatcher",S:"system"};
   const div=document.createElement("div");
   div.className="tl"+(line.s==="S"?" system-line":"");
-  div.innerHTML=`<span class="tl-speaker ${clsMap[line.s]}">${speakerMap[line.s]}</span><span class="tl-text">${esc(line.t)}</span>`;
+  div.innerHTML=`<span class="tl-speaker ${clsMap[line.s]}">${speakerMap[line.s]}</span><span class="tl-text">${highlightText(line.t,curKeywords)}</span>`;
   container.appendChild(div);
   // Auto-scroll
   const area=document.getElementById("transcript-area");
@@ -759,6 +867,7 @@ function resetUI(){
 document.addEventListener("DOMContentLoaded",()=>{
   buildIndex();initMap();initSearch();initPlayer();
   document.getElementById("ai-close").addEventListener("click",aiHide);
+  document.getElementById("transcript-area").addEventListener("click",function(e){const kw=e.target.closest(".kw");if(kw)handleKeywordClick(kw)});
 });
 
 })();
