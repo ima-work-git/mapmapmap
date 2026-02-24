@@ -222,6 +222,55 @@ body{font-family:'Hiragino Kaku Gothic ProN',Meiryo,'Noto Sans JP',sans-serif;ov
 /* System lines: keywords have adjusted colors */
 .tl.system-line .kw{border-bottom-style:dashed}
 
+/* ══════════ Info Area (bottom of right panel) ══════════ */
+#info-area{height:300px;flex-shrink:0;border-top:2px solid rgba(230,126,34,.4);display:flex;flex-direction:column;background:rgba(10,12,25,.98)}
+#info-bar{display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(0,0,0,.3);flex-shrink:0;min-height:30px}
+#info-icon{font-size:14px}
+#info-title{font-size:11px;font-weight:600;color:#95a5a6;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-x{background:none;border:none;color:rgba(255,255,255,.5);font-size:16px;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:3px;transition:.15s}
+.info-x:hover{background:rgba(255,255,255,.1);color:#fff}
+#info-content{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
+.info-placeholder{display:flex;align-items:center;justify-content:center;height:100%;color:#3d3d3d;font-size:12px;user-select:none}
+.info-sv-frame{width:100%;height:100%;border:0;display:block}
+
+/* Info SV Gallery tabs */
+.info-sv-tabs{display:flex;gap:2px;padding:4px 6px;flex-wrap:wrap;background:rgba(0,0,0,.25);flex-shrink:0}
+.info-sv-tab{padding:3px 8px;border:1px solid rgba(255,255,255,.15);border-radius:4px;background:transparent;color:#95a5a6;font-size:10px;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.info-sv-tab.active{background:#2ecc71;border-color:#2ecc71;color:#fff}
+.info-sv-tab:hover:not(.active){background:rgba(255,255,255,.08);color:#ecf0f1}
+.info-sv-name{padding:3px 8px;font-size:11px;color:#bdc3c7;background:rgba(0,0,0,.2);flex-shrink:0}
+.info-sv-wrap{flex:1;position:relative;min-height:0}
+
+/* Info area: building info */
+.binfo{padding:10px 12px;color:#ecf0f1;font-size:12px}
+.binfo-hd{font-size:14px;font-weight:700;color:#ecf0f1;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px}
+.binfo-tbl{width:100%;border-collapse:collapse}
+.binfo-tbl td{padding:3px 0;vertical-align:top}
+.binfo-k{color:#7f8c8d;font-weight:600;width:55px;white-space:nowrap;padding-right:8px}
+.binfo-tenants{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1)}
+.binfo-th{font-size:11px;font-weight:700;color:#7f8c8d;margin-bottom:4px}
+.binfo-tr{display:flex;gap:8px;padding:2px 0;font-size:12px;color:#bdc3c7}
+.binfo-tr.hl{color:#e74c3c;font-weight:700}
+.binfo-fl{color:#7f8c8d;font-weight:700;min-width:28px}
+.binfo-cand{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:6px;margin-bottom:6px;cursor:pointer;transition:.2s}
+.binfo-cand:hover{border-color:#bb8fce;background:rgba(187,143,206,.08)}
+.binfo-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#c0392b;color:#fff;font-size:11px;font-weight:700;margin-right:6px;flex-shrink:0}
+.binfo-cand-name{font-weight:700;color:#ecf0f1;font-size:12px;display:inline}
+.binfo-cand-meta{font-size:11px;color:#7f8c8d;margin-top:3px}
+.info-brief{padding:16px;text-align:center;color:#bdc3c7}
+.info-brief-name{font-size:14px;font-weight:700;color:#ecf0f1;margin-bottom:4px}
+.info-brief-coord{font-size:11px;color:#7f8c8d;font-variant-numeric:tabular-nums}
+
+/* ══════════ Keyword Action Menu ══════════ */
+#kw-menu{position:fixed;z-index:210;background:rgba(255,255,255,.98);border:1px solid #ddd;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:8px 10px;min-width:190px}
+.kwm-label{font-size:13px;font-weight:700;color:#2c3e50;padding:0 2px 6px;border-bottom:1px solid #ecf0f1;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.kwm-actions{display:flex;gap:4px}
+.kwm-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 6px;border:1px solid #ecf0f1;border-radius:8px;background:#fff;cursor:pointer;font-size:20px;transition:.15s;font-family:inherit}
+.kwm-btn span{font-size:9px;color:#7f8c8d;font-weight:600}
+.kwm-btn:hover{background:#ebf5fb;border-color:#3498db}
+.kwm-btn:hover span{color:#2c3e50}
+.kwm-btn[style*="display: none"]{flex:0}
+
 /* ── Buttons ── */
 .dbtn{padding:6px 12px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;flex:1}
 .dbtn:disabled{opacity:.4;cursor:not-allowed}

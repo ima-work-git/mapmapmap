@@ -340,20 +340,150 @@ function highlightText(text,keywords){
   return html;
 }
 
-function handleKeywordClick(el){
-  const cat=el.dataset.cat,data=JSON.parse(el.dataset.kw||"{}");
-  switch(cat){
-    case"address":flyTo(data.lat,data.lng,data.z||17);break;
-    case"person":flyTo(data.lat,data.lng,19);openSV(data.lat,data.lng,((data.eb||0)+180)%360);break;
-    case"building":flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng);break;
-    case"building-group":flyTo(data.lat,data.lng,data.z||15);break;
-    case"landmark":flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng,data.heading||0);break;
-    case"poi":if(data.lat&&data.lng){flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng)}break;
-    case"tenant":if(data.lat&&data.lng){flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng)}break;
-    case"store-cat":if(data.storeCat)showSVGallery(data.storeCat);break;
-    case"floor":if(data.lat&&data.lng){flyTo(data.lat,data.lng,18);openSV(data.lat,data.lng)}break;
-    case"feature":if(data.lat&&data.lng){flyTo(data.lat,data.lng,19);openSV(data.lat,data.lng)}break;
+/* ═══════════════════ 2c. KEYWORD MENU & INFO AREA ═══════════════════ */
+let kwMenuData=null;
+
+function showKwMenu(el){
+  const cat=el.dataset.cat,data=JSON.parse(el.dataset.kw||"{}"),text=el.textContent;
+  kwMenuData={cat,data,text};
+  const menu=document.getElementById("kw-menu");
+  const rect=el.getBoundingClientRect();
+  const rp=document.getElementById("right-panel").getBoundingClientRect();
+  menu.style.left=Math.max(rp.left+4,Math.min(rect.left,rp.right-200))+"px";
+  menu.style.top=Math.min(rect.bottom+4,window.innerHeight-140)+"px";
+  menu.querySelector(".kwm-label").textContent=text;
+  const hasLoc=!!(data.lat&&data.lng),hasSC=!!data.storeCat;
+  const canInfo=["person","building","building-group","tenant","floor"].includes(cat);
+  menu.querySelector('[data-action="marker"]').style.display=hasLoc?"":"none";
+  menu.querySelector('[data-action="info"]').style.display=canInfo?"":"none";
+  menu.querySelector('[data-action="sv"]').style.display=(hasLoc||hasSC)?"":"none";
+  menu.querySelector('[data-action="gmap"]').style.display=(hasLoc||hasSC)?"":"none";
+  menu.classList.remove("hidden");
+}
+function hideKwMenu(){document.getElementById("kw-menu").classList.add("hidden");kwMenuData=null}
+
+function kwMenuAction(action){
+  if(!kwMenuData)return;const{cat,data,text}=kwMenuData;hideKwMenu();
+  if(action==="marker")doKwMarker(data,text);
+  else if(action==="info")doKwInfo(data,cat,text);
+  else if(action==="sv")doKwSV(data,cat,text);
+  else if(action==="gmap")doKwGmap(data,cat,text);
+}
+
+/* ── Info area helpers ── */
+function setInfoBar(icon,title){document.getElementById("info-icon").textContent=icon;document.getElementById("info-title").textContent=title}
+function setInfoContent(html){document.getElementById("info-content").innerHTML=html}
+function clearInfoArea(){setInfoBar("","情報表示エリア");setInfoContent('<div class="info-placeholder">キーワードをクリックして情報を表示</div>')}
+
+/* ── Action: Marker ── */
+function doKwMarker(data,text){
+  if(!data.lat||!data.lng)return;
+  flyTo(data.lat,data.lng,18);addM(data.lat,data.lng,{cls:"search-m",label:"📍",title:text});
+  setInfoBar("📍",text+" — 地図にマーカー表示");
+  setInfoContent('<div class="info-brief"><div class="info-brief-name">'+esc(text)+'</div><div class="info-brief-coord">'+data.lat.toFixed(5)+", "+data.lng.toFixed(5)+"</div></div>");
+}
+
+/* ── Action: Building Info ── */
+function doKwInfo(data,cat,text){
+  const html=renderBuildingInfo(data,cat,text);
+  setInfoBar("🏢",text+" — 建物情報");setInfoContent(html);
+  if(data.lat&&data.lng)flyTo(data.lat,data.lng,18);
+  document.querySelectorAll("#info-content .binfo-cand").forEach(el=>el.addEventListener("click",function(){flyTo(+this.dataset.lat,+this.dataset.lng,18);openSV(+this.dataset.lat,+this.dataset.lng)}));
+}
+
+/* ── Action: Street View ── */
+function doKwSV(data,cat,text){
+  if(cat==="store-cat"&&data.storeCat){showInfoSVGallery(data.storeCat,text);return}
+  if(cat==="building-group"){showInfoSVGalleryBuildings(text);return}
+  if(!data.lat||!data.lng)return;
+  const h=data.heading||(data.eb?((data.eb+180)%360):0);
+  flyTo(data.lat,data.lng,18);setInfoBar("📷",text+" — ストリートビュー");
+  setInfoContent('<iframe class="info-sv-frame" src="'+svEmbedUrl(data.lat,data.lng,h)+'" allowfullscreen loading="lazy"></iframe>');
+}
+
+/* ── Action: Google Maps Search ── */
+function doKwGmap(data,cat,text){
+  let q=text,lat=data.lat,lng=data.lng;
+  if(data.storeCat){const a=DEMO[curScenario];if(a&&a.gps){lat=a.gps.lat;lng=a.gps.lng}q=catNames[data.storeCat]||text}
+  if(!lat||!lng)return;flyTo(lat,lng,17);
+  const u="https://www.google.com/maps/embed/v1/search?key=AIzaSyB7--VFS8Fz9_vsnHbiB17JCjJEjGeeq0E&q="+encodeURIComponent(q)+"&center="+lat+","+lng+"&zoom=17";
+  setInfoBar("🔍",text+" — Google Maps検索");
+  setInfoContent('<iframe class="info-sv-frame" src="'+u+'" allowfullscreen loading="lazy"></iframe>');
+}
+
+/* ── Building Info renderer ── */
+function renderBuildingInfo(d,cat,text){
+  const a=DEMO[curScenario];if(!a)return'<div class="info-placeholder">情報なし</div>';
+  if(cat==="person"&&a.buildings){
+    const b=a.buildings.find(x=>x.np===text||(x.lat===d.lat&&x.lng===d.lng));
+    if(b)return'<div class="binfo"><div class="binfo-hd">'+esc(b.np)+'宅</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(b.addr)+'</td></tr><tr><td class="binfo-k">建物</td><td>'+typeL(b.type)+" "+b.fl+'階建て</td></tr><tr><td class="binfo-k">位置</td><td>'+esc(b.feat.pos)+'</td></tr><tr><td class="binfo-k">右隣</td><td>'+esc(b.feat.r)+'</td></tr><tr><td class="binfo-k">左隣</td><td>'+esc(b.feat.l)+'</td></tr><tr><td class="binfo-k">向かい</td><td>'+esc(b.feat.ac)+'</td></tr><tr><td class="binfo-k">裏手</td><td>'+esc(b.feat.bk)+'</td></tr></table></div>';
   }
+  if((cat==="building"||cat==="tenant")&&a.mansions){
+    const m=a.mansions.find(x=>x.lat===d.lat&&x.lng===d.lng);
+    if(m){let h='<div class="binfo"><div class="binfo-hd">'+esc(m.name)+'</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(m.addr)+'</td></tr><tr><td class="binfo-k">規模</td><td>'+m.fl+'階建て / '+m.units+'戸</td></tr><tr><td class="binfo-k">特徴</td><td>'+m.feats.join("、")+'</td></tr></table>';
+      if(a.tenants_g3&&m.id==="G3")h+=renderTenantList(a.tenants_g3,d.fl);return h+"</div>";}
+  }
+  if((cat==="building"||cat==="tenant")&&a.building){
+    if(a.building.lat===d.lat||a.building.name===text){
+      let h='<div class="binfo"><div class="binfo-hd">'+esc(a.building.name)+'</div><table class="binfo-tbl"><tr><td class="binfo-k">住所</td><td>'+esc(a.building.addr)+'</td></tr><tr><td class="binfo-k">登記</td><td>'+esc(a.building.reg)+'</td></tr></table>';
+      if(a.tenants)h+=renderTenantList(a.tenants,d.fl);return h+"</div>";}
+  }
+  if(cat==="building-group"&&a.mansions){
+    let h='<div class="binfo"><div class="binfo-hd">'+esc(text)+" ("+a.mansions.length+'棟)</div>';
+    a.mansions.forEach(function(m,i){h+='<div class="binfo-cand" data-lat="'+m.lat+'" data-lng="'+m.lng+'"><span class="binfo-num">'+(i+1)+'</span><span class="binfo-cand-name">'+esc(m.name)+'</span><div class="binfo-cand-meta">'+m.fl+'階建て/'+m.units+'戸 — '+m.feats.join("、")+"</div></div>"});
+    return h+"</div>";
+  }
+  if(cat==="floor"){
+    const fl=d.fl,ts=a.tenants||a.tenants_g3,bn=d.bname||(a.building?a.building.name:"");
+    if(ts){const t=ts.find(function(x){return x.fl==fl});
+      if(t){let h='<div class="binfo"><div class="binfo-hd">'+fl+'階の情報</div><table class="binfo-tbl"><tr><td class="binfo-k">テナント</td><td style="font-weight:700;color:#e74c3c">'+esc(t.name)+"</td></tr>"+(bn?'<tr><td class="binfo-k">ビル</td><td>'+esc(bn)+"</td></tr>":"")+"</table>";
+        h+=renderTenantList(ts,fl);return h+"</div>";}
+    }
+  }
+  return'<div class="info-placeholder">詳細情報なし</div>';
+}
+function renderTenantList(tenants,hlFl){
+  let h='<div class="binfo-tenants"><div class="binfo-th">テナント一覧</div>';
+  tenants.forEach(function(t){var hl=hlFl!=null&&(t.fl==hlFl);h+='<div class="binfo-tr'+(hl?" hl":"")+'"><span class="binfo-fl">'+t.fl+'F</span><span>'+esc(t.name)+"</span></div>"});
+  return h+"</div>";
+}
+
+/* ── SV Gallery in info area ── */
+function showInfoSVGallery(storeCat,text){
+  const a=DEMO[curScenario];if(!a||!a.landmarks||!a.gps)return;
+  const g=a.gps,items=a.landmarks.filter(function(l){return l.cat===storeCat}).map(function(l){return Object.assign({},l,{d:Math.round(hav(g.lat,g.lng,l.lat,l.lng))})}).sort(function(x,y){return x.d-y.d}).slice(0,6);
+  if(!items.length)return;
+  setInfoBar("📷",(catNames[storeCat]||text)+" — SV候補 "+items.length+"件");
+  clearGalMarkers();
+  items.forEach(function(l,i){var el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=l.name+" ("+l.d+"m)";
+    el.addEventListener("click",function(e){e.stopPropagation();selectInfoTab(i,items)});
+    galMarkers.push(new maplibregl.Marker({element:el}).setLngLat([l.lng,l.lat]).addTo(map))});
+  fitB(items.map(function(l){return{lat:l.lat,lng:l.lng}}),80);renderInfoGallery(items);
+}
+function showInfoSVGalleryBuildings(text){
+  const a=DEMO[curScenario];if(!a||!a.mansions)return;
+  const items=a.mansions.map(function(m){return{name:m.name,lat:m.lat,lng:m.lng,heading:0,cat:"building",d:"",fl:m.fl,feats:m.feats}});
+  setInfoBar("📷",text+" — SV候補 "+items.length+"件");
+  clearGalMarkers();
+  items.forEach(function(m,i){var el=document.createElement("div");el.className="marker svg-num-m";el.innerHTML=String(i+1);el.title=m.name;
+    el.addEventListener("click",function(e){e.stopPropagation();selectInfoTab(i,items)});
+    galMarkers.push(new maplibregl.Marker({element:el}).setLngLat([m.lng,m.lat]).addTo(map))});
+  fitB(items.map(function(m){return{lat:m.lat,lng:m.lng}}),80);renderInfoGallery(items);
+}
+function renderInfoGallery(items){
+  let h='<div style="display:flex;flex-direction:column;height:100%"><div class="info-sv-tabs">';
+  items.forEach(function(l,i){h+='<button class="info-sv-tab'+(i===0?" active":"")+'" data-idx="'+i+'" title="'+esc(l.name)+(l.d?" ("+l.d+"m)":"")+'">'+(i+1)+". "+esc(l.name.length>14?l.name.substring(0,14)+"…":l.name)+"</button>"});
+  h+='</div><div class="info-sv-name">'+catI(items[0].cat)+" "+esc(items[0].name)+(items[0].d?" ("+items[0].d+"m)":"")+'</div><div class="info-sv-wrap"><iframe class="info-sv-frame" id="info-sv-iframe" src="'+svEmbedUrl(items[0].lat,items[0].lng,items[0].heading||0)+'" allowfullscreen loading="lazy"></iframe></div></div>';
+  setInfoContent(h);
+  document.querySelectorAll(".info-sv-tab").forEach(function(t){t.addEventListener("click",function(){selectInfoTab(+this.dataset.idx,items)})});
+}
+function selectInfoTab(idx,items){
+  var it=items[idx];if(!it)return;
+  document.querySelectorAll(".info-sv-tab").forEach(function(t,i){t.classList.toggle("active",i===idx)});
+  var nm=document.querySelector(".info-sv-name");if(nm)nm.innerHTML=catI(it.cat)+" "+esc(it.name)+(it.d?" ("+it.d+"m)":"");
+  var fr=document.getElementById("info-sv-iframe");if(fr)fr.src=svEmbedUrl(it.lat,it.lng,it.heading||0);
+  flyTo(it.lat,it.lng,18);
+  galMarkers.forEach(function(mk,mi){var el=mk.getElement();if(el){el.style.transform=mi===idx?"scale(1.4)":"";el.style.boxShadow=mi===idx?"0 0 16px rgba(46,204,113,.8)":""}});
 }
 
 /* ═══════════════════ 3. MAP ═══════════════════ */
@@ -859,7 +989,7 @@ function execAction(a){
 }
 
 function resetUI(){
-  clearM();clearGalMarkers();clearGPS();aiHide();hideAerial();closeSV();hideSVGallery();
+  clearM();clearGalMarkers();clearGPS();aiHide();hideAerial();closeSV();hideSVGallery();hideKwMenu();clearInfoArea();
   setBadge("call-status","idle","待機中");setAI("ai-idle","AI: 待機中");setGPSBadge(null);
 }
 
@@ -867,7 +997,10 @@ function resetUI(){
 document.addEventListener("DOMContentLoaded",()=>{
   buildIndex();initMap();initSearch();initPlayer();
   document.getElementById("ai-close").addEventListener("click",aiHide);
-  document.getElementById("transcript-area").addEventListener("click",function(e){const kw=e.target.closest(".kw");if(kw)handleKeywordClick(kw)});
+  document.getElementById("transcript-area").addEventListener("click",function(e){const kw=e.target.closest(".kw");if(kw){e.stopPropagation();showKwMenu(kw)}});
+  document.querySelectorAll("#kw-menu .kwm-btn").forEach(function(b){b.addEventListener("click",function(){kwMenuAction(this.dataset.action)})});
+  document.addEventListener("click",function(e){if(!e.target.closest("#kw-menu")&&!e.target.closest(".kw"))hideKwMenu()});
+  document.getElementById("info-close").addEventListener("click",clearInfoArea);
 });
 
 })();
