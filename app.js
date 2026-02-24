@@ -392,9 +392,10 @@ function setInfoContent(html){if(aerialMap){aerialMap.remove();aerialMap=null}do
 function clearInfoArea(){setInfoBar("","情報表示エリア");setInfoContent('<div class="info-placeholder">キーワードをクリックして情報を表示</div>')}
 
 /* ── Action: Marker ── */
+function panIfOffscreen(lat,lng,z){if(!map.getBounds().contains([lng,lat]))map.flyTo({center:[lng,lat],zoom:z||17,duration:1200})}
 function doKwMarker(data,text){
   if(!data.lat||!data.lng)return;
-  flyTo(data.lat,data.lng,18);addM(data.lat,data.lng,{cls:"search-m",label:"📍",title:text});
+  addM(data.lat,data.lng,{cls:"search-m",label:"📍",title:text});panIfOffscreen(data.lat,data.lng,18);
   setInfoBar("📍",text+" — 地図にマーカー表示");
   setInfoContent('<div class="info-brief"><div class="info-brief-name">'+esc(text)+'</div><div class="info-brief-coord">'+data.lat.toFixed(5)+", "+data.lng.toFixed(5)+"</div></div>");
 }
@@ -403,7 +404,7 @@ function doKwMarker(data,text){
 function doKwInfo(data,cat,text){
   const html=renderBuildingInfo(data,cat,text);
   setInfoBar("🏢",text+" — 建物情報");setInfoContent(html);
-  if(data.lat&&data.lng)flyTo(data.lat,data.lng,18);
+  if(data.lat&&data.lng)panIfOffscreen(data.lat,data.lng,18);
   document.querySelectorAll("#info-content .binfo-cand").forEach(el=>el.addEventListener("click",function(){flyTo(+this.dataset.lat,+this.dataset.lng,18);openSV(+this.dataset.lat,+this.dataset.lng)}));
 }
 
@@ -413,7 +414,7 @@ function doKwSV(data,cat,text){
   if(cat==="building-group"){showInfoSVGalleryBuildings(text);return}
   if(!data.lat||!data.lng)return;
   const h=data.heading||(data.eb?((data.eb+180)%360):0);
-  flyTo(data.lat,data.lng,18);setInfoBar("📷",text+" — ストリートビュー");
+  panIfOffscreen(data.lat,data.lng,18);setInfoBar("📷",text+" — ストリートビュー");
   setInfoContent('<iframe class="info-sv-frame" src="'+svEmbedUrl(data.lat,data.lng,h)+'" allowfullscreen loading="lazy"></iframe>');
 }
 
@@ -421,12 +422,26 @@ function doKwSV(data,cat,text){
 function doKwGmap(data,cat,text){
   let q=text,lat=data.lat,lng=data.lng;
   if(data.storeCat){const a=DEMO[curScenario];if(a&&a.gps){lat=a.gps.lat;lng=a.gps.lng}q=catNames[data.storeCat]||text}
-  if(!lat||!lng)return;
-  /* 検索地点にピンを追加 */
+  if(!lat||!lng){
+    setInfoBar("🗺","Googleマップ — "+text);
+    setInfoContent('<div class="info-placeholder">Googleマップで検索ヒットなし</div>');
+    return;
+  }
+  /* ピンを追加し、画面外なら地図を移動（ユーザー明示操作のため許可） */
   addM(lat,lng,{cls:"search-m",label:"🔍",title:"Googleマップ: "+text});
-  const u="https://www.google.com/maps/embed/v1/search?key=AIzaSyB7--VFS8Fz9_vsnHbiB17JCjJEjGeeq0E&q="+encodeURIComponent(q)+"&center="+lat+","+lng+"&zoom=17";
+  panIfOffscreen(lat,lng,17);
+  var gmLink="https://www.google.com/maps/search/"+encodeURIComponent(q)+"/@"+lat+","+lng+",17z";
+  var embedUrl="https://www.google.com/maps/embed/v1/search?key=AIzaSyB7--VFS8Fz9_vsnHbiB17JCjJEjGeeq0E&q="+encodeURIComponent(q)+"&center="+lat+","+lng+"&zoom=17";
   setInfoBar("🗺","Googleマップ — "+text);
-  setInfoContent('<iframe class="info-sv-frame" src="'+u+'" allowfullscreen loading="lazy"></iframe>');
+  var h='<div style="display:flex;flex-direction:column;height:100%">';
+  h+='<div style="padding:4px 8px;font-size:11px;color:#7f8c8d;background:rgba(0,0,0,.25);flex-shrink:0">📍 地図にピン追加済 &nbsp;<a href="'+gmLink+'" target="_blank" rel="noopener" style="color:#3498db;text-decoration:none">↗ Googleマップで開く</a></div>';
+  h+='<iframe id="gmap-frame" class="info-sv-frame" src="'+embedUrl+'" allowfullscreen loading="lazy"></iframe></div>';
+  setInfoContent(h);
+  var fr=document.getElementById("gmap-frame");
+  if(fr)fr.onerror=function(){
+    setInfoBar("🗺","Googleマップ — 検索ヒットなし");
+    setInfoContent('<div class="info-placeholder">Googleマップで検索ヒットなし<br><br><a href="'+gmLink+'" target="_blank" rel="noopener" style="color:#3498db;text-decoration:underline">↗ Googleマップで直接検索する</a></div>');
+  };
 }
 
 /* ── Building Info renderer ── */
