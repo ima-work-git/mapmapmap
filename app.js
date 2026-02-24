@@ -23,17 +23,17 @@ area_a:{id:"area_a",name:"同一番地密集地区（松戸駅付近）",center:
     {id:"A4",np:"高橋",type:"apartment",fl:3,lat:35.78355,lng:139.90135,eb:180,addr:"千葉県松戸市松戸1234番地",feat:{pos:"3階建てアパート",r:"渡辺",l:"佐藤",ac:"松戸中央公園",bk:"小林"}},
     {id:"A5",np:"渡辺",type:"detached",fl:2,lat:35.78345,lng:139.90145,eb:180,addr:"千葉県松戸市松戸1234番地",feat:{pos:"突き当たり（行き止まり）",r:"(壁)",l:"高橋",ac:"(空き地)",bk:"加藤"}}
   ],
-  pois:[{name:"セブンイレブン松戸駅前店",cat:"convenience_store",lat:35.78390,lng:139.90090},{name:"松戸中央公園",cat:"park",lat:35.78360,lng:139.90090}],
+  pois:[{name:"セブンイレブン松戸駅前店",cat:"convenience_store",lat:35.78390,lng:139.90090},{name:"松戸中央公園",cat:"park",lat:35.78255,lng:139.90312}],
   dtree:{q:"お宅の向かいには何がありますか？",options:{"コンビニ":{result:"A1",label:"❶ 鈴木宅（角地・向かいにセブンイレブン）"},"駐車場":{result:"A2",label:"❷ 山田宅（向かいに月極駐車場）"},"公園":{q:"お宅は3階建てですか？",options:{"はい":{result:"A4",label:"❹ 高橋宅（3階建てアパート）"},"いいえ":{result:"A3",label:"❸ 佐藤宅（公園の隣の戸建て）"}}},"空き地":{result:"A5",label:"❺ 渡辺宅（突き当たり・向かいに空き地）"}}}
 },
-area_b:{id:"area_b",name:"路上通報想定地区（柏駅付近）",center:[139.9740,35.8650],
-  gps:{lat:35.8668,lng:139.9765,acc:150},
+area_b:{id:"area_b",name:"路上通報想定地区（柏駅付近）",center:[139.9715,35.8625],
+  gps:{lat:35.8655,lng:139.9750,acc:150},
   landmarks:[
     {name:"旧水戸街道入口",cat:"intersection",lat:35.8673,lng:139.9781,heading:220},
-    {name:"柏駅西口",cat:"intersection",lat:35.8636,lng:139.9680,heading:45},
+    {name:"柏駅西口",cat:"intersection",lat:35.8625,lng:139.9700,heading:45},
     {name:"ローソン柏駅南口店",cat:"convenience_store",lat:35.8617,lng:139.9697,heading:0},
-    {name:"ローソン柏駅東口店",cat:"convenience_store",lat:35.8623,lng:139.9716,heading:270},
-    {name:"柏神社",cat:"temple_shrine",lat:35.8688,lng:139.9768,heading:270},
+    {name:"ローソン柏駅東口店",cat:"convenience_store",lat:35.8627,lng:139.9723,heading:270},
+    {name:"柏神社",cat:"temple_shrine",lat:35.8599,lng:139.9738,heading:270},
     {name:"マツモトキヨシ柏駅前店",cat:"store",lat:35.8630,lng:139.9720,heading:90}
   ]
 },
@@ -82,23 +82,23 @@ area_f:{id:"area_f",name:"類似団地棟地区（松戸・野菊野）",center:
   ],
   dtree:{q:"何号棟ですか？",options:{"1号棟":{result:"F1",label:"野菊野団地1号棟（14階建て・東端）"},"2号棟":{result:"F2",label:"野菊野団地2号棟（市場側）"},"3号棟":{result:"F3",label:"野菊野団地3号棟（8階建て・団地中央）"},"4号棟":{result:"F4",label:"野菊野団地4号棟（バス停ロータリー前）"},"5号棟":{result:"F5",label:"野菊野団地5号棟（敬老ホーム・西端）"},"わからない":{q:"建物は何階建てですか？",options:{"8階":{result:"F3",label:"3号棟（唯一の8階建て）"},"14階":{q:"近くに何が見えますか？",options:{"バス停・ロータリー":{result:"F4",label:"4号棟（バス停ロータリーが目の前）"},"市場・卸売場":{result:"F2",label:"2号棟（松戸南部市場が近い）"},"敬老ホーム・こども館":{result:"F5",label:"5号棟（1階に敬老ホーム）"},"どれも見えない":{result:"F1",label:"1号棟（東端・管理事務所近く）"}}}}}}}
 },
-area_g:{id:"area_g",name:"複合対応シナリオ（松戸・北松戸）",center:[139.9035,35.7945],
-  gps:{lat:35.7940,lng:139.9042,acc:300},
+area_g:{id:"area_g",name:"複合対応シナリオ（松戸・北松戸）",center:[139.9120,35.8005],
+  gps:{lat:35.8000,lng:139.9125,acc:300},
   mansions:[
-    {id:"G1",name:"北松戸ビル",addr:"千葉県松戸市上本郷901-1",lat:35.7948,lng:139.9032,fl:7,units:14,feats:["駅ロータリー正面","7階建て","1階にドラッグストア"],dist:"駅正面・1階ドラッグストア"},
-    {id:"G2",name:"北松戸第2ビル",addr:"千葉県松戸市上本郷901-3",lat:35.7944,lng:139.9038,fl:5,units:10,feats:["駅から2棟目","5階建て","1階に不動産屋"],dist:"5階建て・1階不動産屋"},
-    {id:"G3",name:"北松戸第3ビル",addr:"千葉県松戸市上本郷902-1",lat:35.7940,lng:139.9046,fl:9,units:18,feats:["9階建て（最も高い）","交差点の角","1階にセブンイレブン"],dist:"9階建て・交差点角・1階セブンイレブン"}
+    {id:"G1",name:"北松戸ビル",addr:"千葉県松戸市上本郷901-1",lat:35.8010,lng:139.9122,fl:7,units:14,feats:["駅ロータリー正面","7階建て","1階にドラッグストア"],dist:"駅正面・1階ドラッグストア"},
+    {id:"G2",name:"北松戸第2ビル",addr:"千葉県松戸市上本郷901-3",lat:35.8007,lng:139.9128,fl:5,units:10,feats:["駅から2棟目","5階建て","1階に不動産屋"],dist:"5階建て・1階不動産屋"},
+    {id:"G3",name:"北松戸第3ビル",addr:"千葉県松戸市上本郷902-1",lat:35.8003,lng:139.9133,fl:9,units:18,feats:["9階建て（最も高い）","交差点の角","1階にセブンイレブン"],dist:"9階建て・交差点角・1階セブンイレブン"}
   ],
   landmarks:[
-    {name:"北松戸駅前ロータリー",cat:"intersection",lat:35.7952,lng:139.9028,heading:180},
-    {name:"セブンイレブン北松戸駅東口店",cat:"convenience_store",lat:35.7940,lng:139.9047,heading:270},
-    {name:"北松戸交差点",cat:"intersection",lat:35.7937,lng:139.9050,heading:0},
-    {name:"上本郷公園",cat:"park",lat:35.7932,lng:139.9035,heading:90}
+    {name:"北松戸駅前ロータリー",cat:"intersection",lat:35.8009,lng:139.9120,heading:180},
+    {name:"セブンイレブン北松戸駅東口店",cat:"convenience_store",lat:35.8003,lng:139.9133,heading:270},
+    {name:"北松戸交差点",cat:"intersection",lat:35.8000,lng:139.9136,heading:0},
+    {name:"上本郷公園",cat:"park",lat:35.7995,lng:139.9112,heading:90}
   ],
   pois:[
-    {name:"北松戸駅",cat:"intersection",lat:35.7952,lng:139.9028},
-    {name:"セブンイレブン北松戸駅東口店",cat:"convenience_store",lat:35.7940,lng:139.9047},
-    {name:"上本郷公園",cat:"park",lat:35.7932,lng:139.9035}
+    {name:"北松戸駅",cat:"intersection",lat:35.8007,lng:139.9118},
+    {name:"セブンイレブン北松戸駅東口店",cat:"convenience_store",lat:35.8003,lng:139.9133},
+    {name:"上本郷公園",cat:"park",lat:35.7995,lng:139.9112}
   ],
   tenants_g3:[
     {fl:"B1",name:"ダーツバー North"},{fl:1,name:"セブンイレブン北松戸駅東口店"},{fl:2,name:"松戸北口整骨院"},
@@ -130,7 +130,7 @@ area_a:[
   {s:"S",t:"📍 住所確定: 千葉県松戸市松戸1234番地 山田宅",a:{type:"confirm",id:"A2"}},
 ],
 area_b:[
-  {s:"S",t:"📡 入電GPS: 35.8668, 139.9765（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.8668,lng:139.9765,acc:300}},
+  {s:"S",t:"📡 入電GPS: 35.8655, 139.9750（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.8655,lng:139.9750,acc:300}},
   {s:"C",t:"あの、事故です！車と自転車がぶつかって…！"},
   {s:"D",t:"119番消防です。おケガされた方はいますか？"},
   {s:"C",t:"はい、自転車の人が倒れてます！場所がわかりません…交差点の近くです"},
@@ -222,7 +222,7 @@ area_f:[
 ],
 area_g:[
   /* Phase 1: GPS入電 */
-  {s:"S",t:"📡 入電GPS: 35.7940, 139.9042（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.7940,lng:139.9042,acc:300}},
+  {s:"S",t:"📡 入電GPS: 35.8000, 139.9125（精度 ±300m — 測位中…）",a:{type:"gps",lat:35.8000,lng:139.9125,acc:300}},
   {s:"C",t:"もしもし！ビルの中で人が倒れてます！救急車お願いします！"},
   {s:"D",t:"119番消防です。救急ですね。場所はどちらですか？"},
   {s:"C",t:"北松戸の駅の近くのビルです…住所がわかりません…"},
@@ -242,7 +242,7 @@ area_g:[
   {s:"D",t:"北松戸第3ビルですね。何階で倒れていますか？"},
   {s:"C",t:"4階です！お店の中で…スナックっていうのかな…"},
   {s:"S",t:"🏢 テナント照合: 北松戸第3ビル4F =「スナック都」",a:{type:"show_tenants_g"}},
-  {s:"D",t:"4階のスナック都ですね。すぐに救急車を向かわせます。",a:{type:"sv",lat:35.7940,lng:139.9046,h:0}},
+  {s:"D",t:"4階のスナック都ですね。すぐに救急車を向かわせます。",a:{type:"sv",lat:35.8003,lng:139.9133,h:0}},
   {s:"C",t:"お願いします！急いでください！"},
   {s:"S",t:"📍 住所確定: 千葉県松戸市上本郷902-1 北松戸第3ビル4F スナック都",a:{type:"confirm_d",id:"G3"}},
 ]};
@@ -256,7 +256,7 @@ const EXTRA_KW={
     {text:"松戸市松戸",cat:"address",data:{lat:35.7838,lng:139.9011,z:15}},
     {text:"月極駐車場",cat:"feature",data:{lat:35.78375,lng:139.90115}},
     {text:"コンビニ",cat:"store-cat",data:{storeCat:"convenience_store"}},
-    {text:"公園",cat:"poi",data:{lat:35.78360,lng:139.90090}}
+    {text:"公園",cat:"poi",data:{lat:35.78255,lng:139.90312}}
   ],
   area_b:[
     {text:"交差点",cat:"store-cat",data:{storeCat:"intersection"}},
@@ -293,9 +293,9 @@ const EXTRA_KW={
     {text:"セブンイレブン",cat:"store-cat",data:{storeCat:"convenience_store"}},
     {text:"コンビニ",cat:"store-cat",data:{storeCat:"convenience_store"}},
     {text:"交差点",cat:"store-cat",data:{storeCat:"intersection"}},
-    {text:"スナック",cat:"tenant",data:{lat:35.7940,lng:139.9046,fl:4,name:"スナック都"}},
-    {text:"4階",cat:"floor",data:{fl:4,bname:"北松戸第3ビル",lat:35.7940,lng:139.9046}},
-    {text:"9階",cat:"feature",data:{lat:35.7940,lng:139.9046,desc:"北松戸第3ビル（9階建て）"}}
+    {text:"スナック",cat:"tenant",data:{lat:35.8003,lng:139.9133,fl:4,name:"スナック都"}},
+    {text:"4階",cat:"floor",data:{fl:4,bname:"北松戸第3ビル",lat:35.8003,lng:139.9133}},
+    {text:"9階",cat:"feature",data:{lat:35.8003,lng:139.9133,desc:"北松戸第3ビル（9階建て）"}}
   ]
 };
 
@@ -390,6 +390,40 @@ function kwMenuAction(action){
 function setInfoBar(icon,title){document.getElementById("info-icon").textContent=icon;document.getElementById("info-title").textContent=title}
 function setInfoContent(html){if(aerialMap){aerialMap.remove();aerialMap=null}document.getElementById("info-content").innerHTML=html}
 function clearInfoArea(){setInfoBar("","情報表示エリア");setInfoContent('<div class="info-placeholder">キーワードをクリックして情報を表示</div>')}
+
+/* ── 候補建物の特徴一覧 ── */
+function updateCandBtn(){
+  var btn=document.getElementById("btn-candidates");
+  if(!btn)return;
+  var a=curScenario?DEMO[curScenario]:null;
+  btn.classList.toggle("hidden",!(a&&(a.mansions||a.buildings)));
+}
+function showCandidateList(){
+  var a=curScenario?DEMO[curScenario]:null;if(!a)return;
+  var h='';
+  if(a.mansions){
+    h+='<div class="binfo" style="padding:8px 10px"><div class="binfo-hd">候補建物 '+a.mansions.length+'棟 — 特徴一覧</div>';
+    a.mansions.forEach(function(m,i){
+      h+='<div class="cand-card"><div class="cand-card-hd"><span class="binfo-num">'+(i+1)+'</span><span class="cand-card-name">'+esc(m.name)+'</span><span class="cand-card-fl">'+m.fl+'階</span></div>';
+      h+='<div class="cand-card-addr">'+esc(m.addr)+'</div>';
+      h+='<div class="cand-card-feats">'+m.feats.map(function(f){return'<span class="feat-tag">'+esc(f)+'</span>'}).join("")+'</div>';
+      if(m.units)h+='<div class="cand-card-meta">'+m.units+'戸</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }else if(a.buildings){
+    h+='<div class="binfo" style="padding:8px 10px"><div class="binfo-hd">候補建物 '+a.buildings.length+'軒 — 特徴一覧</div>';
+    a.buildings.forEach(function(b,i){
+      h+='<div class="cand-card"><div class="cand-card-hd"><span class="binfo-num">'+(i+1)+'</span><span class="cand-card-name">'+esc(b.np)+'宅</span><span class="cand-card-fl">'+typeL(b.type)+' '+b.fl+'階</span></div>';
+      h+='<div class="cand-card-feats"><span class="feat-tag">'+esc(b.feat.pos)+'</span><span class="feat-tag">向かい: '+esc(b.feat.ac)+'</span><span class="feat-tag">右隣: '+esc(b.feat.r)+'</span><span class="feat-tag">左隣: '+esc(b.feat.l)+'</span></div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+  if(!h)return;
+  setInfoBar("🏢","候補建物の特徴一覧");
+  setInfoContent(h);
+}
 
 /* ── Action: Marker ── */
 function panIfOffscreen(lat,lng,z){if(!map.getBounds().contains([lng,lat]))map.flyTo({center:[lng,lat],zoom:z||17,duration:1200})}
@@ -846,6 +880,7 @@ function initPlayer(){
       btnNext.disabled=false;
       document.getElementById("step-counter").textContent=`0 / ${curScript.length}`;
     }
+    updateCandBtn();
   });
 
   btnReset.addEventListener("click",()=>{
@@ -856,6 +891,7 @@ function initPlayer(){
     document.getElementById("transcript-lines").innerHTML=`<div class="tl-placeholder">シナリオを選択して「開始」をクリック</div>`;
     curKeywords=[];
     document.getElementById("step-counter").textContent="";
+    updateCandBtn();
   });
 
   btnNext.addEventListener("click",advance);
@@ -1002,6 +1038,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.querySelectorAll("#kw-menu .kwm-btn").forEach(function(b){b.addEventListener("click",function(){kwMenuAction(this.dataset.action)})});
   document.addEventListener("click",function(e){if(!e.target.closest("#kw-menu")&&!e.target.closest(".kw"))hideKwMenu()});
   document.getElementById("info-close").addEventListener("click",clearInfoArea);
+  document.getElementById("btn-candidates").addEventListener("click",showCandidateList);
 });
 
 })();

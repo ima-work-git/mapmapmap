@@ -197,6 +197,8 @@ body{font-family:'Hiragino Kaku Gothic ProN',Meiryo,'Noto Sans JP',sans-serif;ov
 #info-bar{display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(0,0,0,.3);flex-shrink:0;min-height:30px}
 #info-icon{font-size:14px}
 #info-title{font-size:11px;font-weight:600;color:#95a5a6;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-cand-btn{padding:2px 8px;border:1px solid #e67e22;background:rgba(230,126,34,.15);color:#e67e22;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap;flex-shrink:0}
+.info-cand-btn:hover{background:#e67e22;color:#fff}
 .info-x{background:none;border:none;color:rgba(255,255,255,.5);font-size:16px;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:3px;transition:.15s}
 .info-x:hover{background:rgba(255,255,255,.1);color:#fff}
 #info-content{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
@@ -227,6 +229,15 @@ body{font-family:'Hiragino Kaku Gothic ProN',Meiryo,'Noto Sans JP',sans-serif;ov
 .binfo-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#c0392b;color:#fff;font-size:11px;font-weight:700;margin-right:6px;flex-shrink:0}
 .binfo-cand-name{font-weight:700;color:#ecf0f1;font-size:12px;display:inline}
 .binfo-cand-meta{font-size:11px;color:#7f8c8d;margin-top:3px}
+/* Candidate card */
+.cand-card{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:6px;margin-bottom:6px;background:rgba(255,255,255,.03)}
+.cand-card-hd{display:flex;align-items:center;gap:4px;margin-bottom:3px}
+.cand-card-name{font-weight:700;color:#ecf0f1;font-size:12px}
+.cand-card-fl{font-size:11px;color:#7f8c8d;margin-left:auto;white-space:nowrap}
+.cand-card-addr{font-size:11px;color:#7f8c8d;margin-bottom:4px;padding-left:26px}
+.cand-card-feats{display:flex;flex-wrap:wrap;gap:3px;padding-left:26px}
+.cand-card-meta{font-size:10px;color:#555;padding-left:26px;margin-top:2px}
+
 .info-brief{padding:16px;text-align:center;color:#bdc3c7}
 .info-brief-name{font-size:14px;font-weight:700;color:#ecf0f1;margin-bottom:4px}
 .info-brief-coord{font-size:11px;color:#7f8c8d;font-variant-numeric:tabular-nums}
