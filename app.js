@@ -417,13 +417,15 @@ function doKwSV(data,cat,text){
   setInfoContent('<iframe class="info-sv-frame" src="'+svEmbedUrl(data.lat,data.lng,h)+'" allowfullscreen loading="lazy"></iframe>');
 }
 
-/* ── Action: Google Maps Search ── */
+/* ── Action: Google Maps ── */
 function doKwGmap(data,cat,text){
   let q=text,lat=data.lat,lng=data.lng;
   if(data.storeCat){const a=DEMO[curScenario];if(a&&a.gps){lat=a.gps.lat;lng=a.gps.lng}q=catNames[data.storeCat]||text}
-  if(!lat||!lng)return;flyTo(lat,lng,17);
+  if(!lat||!lng)return;
+  /* 検索地点にピンを追加 */
+  addM(lat,lng,{cls:"search-m",label:"🔍",title:"Googleマップ: "+text});
   const u="https://www.google.com/maps/embed/v1/search?key=AIzaSyB7--VFS8Fz9_vsnHbiB17JCjJEjGeeq0E&q="+encodeURIComponent(q)+"&center="+lat+","+lng+"&zoom=17";
-  setInfoBar("🔍",text+" — Google Maps検索");
+  setInfoBar("🗺","Googleマップ — "+text);
   setInfoContent('<iframe class="info-sv-frame" src="'+u+'" allowfullscreen loading="lazy"></iframe>');
 }
 
@@ -510,8 +512,7 @@ function selectInfoTab(idx,items){
   document.querySelectorAll(".info-sv-tab").forEach(function(t,i){t.classList.toggle("active",i===idx)});
   var nm=document.querySelector(".info-sv-name");if(nm)nm.innerHTML=catI(it.cat)+" "+esc(it.name)+(it.d?" ("+it.d+"m)":"");
   var fr=document.getElementById("info-sv-iframe");if(fr)fr.src=svEmbedUrl(it.lat,it.lng,it.heading||0);
-  flyTo(it.lat,it.lng,18);
-  galMarkers.forEach(function(mk,mi){var el=mk.getElement();if(el){el.style.transform=mi===idx?"scale(1.4)":"";el.style.boxShadow=mi===idx?"0 0 16px rgba(46,204,113,.8)":""}});
+  galMarkers.forEach(function(mk,mi){var el=mk.getElement();if(el){el.classList.toggle("svg-sel",mi===idx)}});
 }
 
 /* ═══════════════════ 3. MAP ═══════════════════ */
@@ -542,7 +543,7 @@ function initMap(){
     if(a==="sv")openSV(ctxLL.lat,ctxLL.lng);
     else if(a==="nearby")searchNearby(ctxLL.lat,ctxLL.lng);
     else if(a==="reverse")reverseGeo(ctxLL.lat,ctxLL.lng);
-    else if(a==="aerial")showAerial(ctxLL.lat,ctxLL.lng);
+    else if(a==="aerial"){document.querySelectorAll(".layer-btn").forEach(function(x){x.classList.toggle("active",x.dataset.layer==="aerial")});map.setLayoutProperty("osm-l","visibility","none");map.setLayoutProperty("aerial-l","visibility","visible")}
     document.getElementById("ctx-menu").classList.add("hidden");
   }));
 }
@@ -913,7 +914,6 @@ function execAction(a){
       addM(b.lat,b.lng,{cls:"cand-m",label:String(i+1),title:b.np+"宅",click:()=>{flyTo(b.lat,b.lng,19);openSV(b.lat,b.lng,(b.eb+180)%360)}});
     });
     fitB(DEMO.area_a.buildings.map(b=>({lat:b.lat,lng:b.lng})),100);
-    showAerial(35.78365,139.90125,19);
   }
   else if(t==="trigger_t1"){setAI("ai-busy","AI: 解析中");setTimeout(()=>showT1(),400)}
   else if(t==="trigger_t3"){setAI("ai-busy","AI: 解析中");setTimeout(()=>showT3(),400)}
@@ -928,11 +928,9 @@ function execAction(a){
     const ms=DEMO[curScenario].mansions;
     ms.forEach((m,i)=>{addM(m.lat,m.lng,{cls:"cand-m",label:String(i+1),title:m.name})});
     fitB(ms.map(m=>({lat:m.lat,lng:m.lng})),80);
-    const c=DEMO[curScenario].center;
-    showAerial(c[1],c[0],16);
   }
   else if(t==="trigger_t6"){setAI("ai-busy","AI: 解析中");setTimeout(()=>showT6(),400)}
-  else if(t==="sv") openSV(a.lat,a.lng,a.h||0);
+  else if(t==="sv"){}/* SV自動表示しない。ユーザークリックで表示 */
   else if(t==="q_answer"){
     // Navigate area_a decision tree via AI dialog
     const r=qAns(a.ans),c=document.getElementById("q-ctr");
@@ -950,19 +948,19 @@ function execAction(a){
   }
   else if(t==="highlight"){
     const b=DEMO.area_a.buildings.find(x=>x.id===a.id);
-    if(b){addM(b.lat,b.lng,{cls:"ok-m",label:"✓",title:"特定: "+b.np+"宅"});flyTo(b.lat,b.lng,19);openSV(b.lat,b.lng,(b.eb+180)%360)}
+    if(b){addM(b.lat,b.lng,{cls:"ok-m",label:"✓",title:"特定: "+b.np+"宅"});flyTo(b.lat,b.lng,19)}
   }
   else if(t==="highlight_lm"){
     const d=DEMO[curScenario];
     const lm=d&&d.landmarks?d.landmarks.find(l=>l.name===a.name):null;
-    if(lm){clearGalMarkers();addM(lm.lat,lm.lng,{cls:"ok-m",label:"✓",title:"特定: "+lm.name});flyTo(lm.lat,lm.lng,19);openSV(lm.lat,lm.lng,lm.heading||0)}
+    if(lm){clearGalMarkers();addM(lm.lat,lm.lng,{cls:"ok-m",label:"✓",title:"特定: "+lm.name});flyTo(lm.lat,lm.lng,19)}
   }
   else if(t==="highlight_c"){
     addM(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,{cls:"ok-m",label:"✓",title:"確認一致"});flyTo(DEMO.area_c.ext.lat,DEMO.area_c.ext.lng,19);
   }
   else if(t==="highlight_d"){
     const m=(DEMO[curScenario].mansions||[]).find(x=>x.id===a.id);
-    if(m){addM(m.lat,m.lng,{cls:"ok-m",label:"✓",title:"特定: "+m.name});flyTo(m.lat,m.lng,19);openSV(m.lat,m.lng)}
+    if(m){addM(m.lat,m.lng,{cls:"ok-m",label:"✓",title:"特定: "+m.name});flyTo(m.lat,m.lng,19)}
   }
   else if(t==="show_tenants_g"){
     const ag=DEMO.area_g,ts=ag.tenants_g3,bld=ag.mansions.find(m=>m.id==="G3");
@@ -970,8 +968,8 @@ function execAction(a){
     html+=`<div class="ai-sec"><div class="ai-sec-title">ビル情報</div><div style="font-size:12px;color:#2c3e50;padding:4px 8px">📍 ${esc(bld.addr)}<br>🏢 ${bld.fl}階建て・交差点角<br>📋 1階: セブンイレブン</div></div>`;
     aiShow("#8e44ad","🏢","テナント照合",bld.name+" — 4F スナック都",html);
   }
-  else if(t==="sv_gallery") showSVGallery(a.cat);
-  else if(t==="sv_gallery_narrow") narrowSVGallery(a.name);
+  else if(t==="sv_gallery"){}/* SV自動表示しない */
+  else if(t==="sv_gallery_narrow"){}
   else if(t==="confirm"||t==="confirm_lm"||t==="confirm_c"||t==="confirm_d"){
     setBadge("call-status","confirmed","確定済み");setAI("ai-idle","AI: 待機中");hideSVGallery();
   }
