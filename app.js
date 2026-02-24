@@ -372,7 +372,7 @@ function kwMenuAction(action){
 
 /* ── Info area helpers ── */
 function setInfoBar(icon,title){document.getElementById("info-icon").textContent=icon;document.getElementById("info-title").textContent=title}
-function setInfoContent(html){document.getElementById("info-content").innerHTML=html}
+function setInfoContent(html){if(aerialMap){aerialMap.remove();aerialMap=null}document.getElementById("info-content").innerHTML=html}
 function clearInfoArea(){setInfoBar("","情報表示エリア");setInfoContent('<div class="info-placeholder">キーワードをクリックして情報を表示</div>')}
 
 /* ── Action: Marker ── */
@@ -614,11 +614,11 @@ window.hideSVGallery=hideSVGallery;
 /* ═══════════════════ 5. AERIAL PANEL ═══════════════════ */
 let aerialMap=null;
 function showAerial(lat,lng,z){
-  document.getElementById("aerial-panel").classList.remove("hidden");
-  if(!aerialMap){aerialMap=new maplibregl.Map({container:"aerial-map",style:{version:8,sources:{a:{type:"raster",tiles:[GSI],tileSize:256}},layers:[{id:"a",type:"raster",source:"a"}]},center:[lng,lat],zoom:z||18,dragRotate:false,interactive:true,attributionControl:false})}
-  else aerialMap.flyTo({center:[lng,lat],zoom:z||18,duration:800});
+  setInfoBar("🛰","航空写真");
+  setInfoContent('<div id="aerial-inline" style="width:100%;height:100%"></div>');
+  requestAnimationFrame(function(){var el=document.getElementById("aerial-inline");if(!el)return;aerialMap=new maplibregl.Map({container:"aerial-inline",style:{version:8,sources:{a:{type:"raster",tiles:[GSI],tileSize:256}},layers:[{id:"a",type:"raster",source:"a"}]},center:[lng,lat],zoom:z||18,dragRotate:false,interactive:true,attributionControl:false})});
 }
-window.hideAerial=function(){document.getElementById("aerial-panel").classList.add("hidden")};
+window.hideAerial=function(){if(aerialMap){aerialMap.remove();aerialMap=null}clearInfoArea()};
 
 /* ═══════════════════ 6. SEARCH BAR ═══════════════════ */
 const ALL=[];
@@ -683,15 +683,11 @@ function qAns(label){
 
 /* ═══════════════════ 8. AI DIALOG ═══════════════════ */
 function aiShow(color,icon,title,sub,html){
-  const d=document.getElementById("ai-area");
-  d.style.borderTopColor=color;d.querySelector(".ai-icon").style.background=color;d.querySelector(".ai-icon").textContent=icon;
-  document.getElementById("ai-title").textContent=title;
-  document.getElementById("ai-subtitle").textContent=sub;
-  document.getElementById("ai-body").innerHTML=html;
-  d.classList.remove("hidden");
+  setInfoBar("🤖",title+(sub?" — "+sub:""));
+  setInfoContent('<div class="ai-content">'+(sub?'<div class="ai-sub">'+sub+'</div>':'')+'<div id="ai-body">'+html+'</div></div>');
   setAI("ai-suggest","AI: 提案あり");
 }
-function aiHide(){document.getElementById("ai-area").classList.add("hidden");setAI("ai-idle","AI: 待機中")}
+function aiHide(){clearInfoArea();setAI("ai-idle","AI: 待機中")}
 
 function renderQ(q){
   if(!q)return"";
@@ -933,7 +929,6 @@ function resetUI(){
 /* ═══════════════════ INIT ═══════════════════ */
 document.addEventListener("DOMContentLoaded",()=>{
   buildIndex();initMap();initSearch();initPlayer();
-  document.getElementById("ai-close").addEventListener("click",aiHide);
   document.getElementById("transcript-area").addEventListener("click",function(e){const kw=e.target.closest(".kw");if(kw){e.stopPropagation();showKwMenu(kw)}});
   document.querySelectorAll("#kw-menu .kwm-btn").forEach(function(b){b.addEventListener("click",function(){kwMenuAction(this.dataset.action)})});
   document.addEventListener("click",function(e){if(!e.target.closest("#kw-menu")&&!e.target.closest(".kw"))hideKwMenu()});
